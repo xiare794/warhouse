@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns = "http://www.w3.org/ns/widgets"
+    xmlns:gap = "http://phonegap.com/ns/1.0"
+    id        = "com.phonegap.example"
+    version   = "1.0.0">
+
+<name>whmo测试client</name>
+
+<description>
+测试程序
+github地址:https://github.com/xiare794/mobile.git
+</description>
+
+<author href="https://example.com" email="you@example.com">
+鹿
+</author>
+<icon src="resource/icon/whIcon_ldpi.png" gap:platform="android" gap:density="ldpi" />
+<icon src="resource/icon/whIcon_mdpi.png" gap:platform="android" gap:density="mdpi" />
+<icon src="resource/icon/whIcon_hdpi.png" gap:platform="android" gap:density="hdpi" />
+<icon src="resource/icon/whIcon_xhdpi.png" gap:platform="android" gap:density="xhdpi" />
+<access origin="*"/>
+</widget>

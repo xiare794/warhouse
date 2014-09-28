@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="UTF-8">
+        <title>任务列表</title>
+
+	<!-- 第二套 -->
+    <link rel="stylesheet" href="jquery-mobile/jquery.mobile-1.4.0.min.css" />
+    <link rel="stylesheet" href="jqplot/jquery.jqplot.css"  >
+    <script type="text/javascript" src="jquery-mobile/jquery-1.9.1.js"></script>
+    <script src="jquery-mobile/jquery.mobile-1.4.0.min.js"></script> 
+    <script type="text/javascript" src="jqplot/jquery.jqplot.js"></script>
+    
+    <script type="text/javascript" src="jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+	<script type="text/javascript" src="jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+    </head>
+    <body>
+    	
+        
+        <div data-role="page" id="page2" class="ui-mini">
+        	<div data-role="panel" id="mypanel">
+                <!-- panel content goes here -->
+                <a href="#" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext">Delete</a>
+                
+                <fieldset data-role="controlgroup" data-theme="b" data-type="horizontal">
+                    <legend class="ui-mini">时间顺序:</legend>
+                    <input type="radio" name="timeDescend" id="timeDescend-On" value="on" checked="checked" data-mini="true">
+                    <label for="timeDescend-On" data-mini="true">近期优先</label>
+                    <input type="radio" name="timeDescend" id="timeDescend-Off" value="off" data-mini="true">
+                    <label for="timeDescend-Off" data-mini="true">按登入日期</label>
+                </fieldset>
+                
+                <fieldset data-role="controlgroup" data-theme="b" data-type="horizontal">
+                    <legend class="ui-mini" data-mini="true">正在进行筛选:</legend>
+                    <input type="radio" name="filter-assigned" id="filter-assigned" value="on" checked="checked" class="ui-mini" data-mini="true">
+                    <label for="filter-assigned" data-mini="true">正在进行</label>
+                    <input type="radio" name="filter-assigned" id="filter-assigned-no" value="off" data-mini="true">
+                    <label for="filter-assigned-no" class="ui-mini">显示全部</label>
+                </fieldset>
+                
+                <fieldset data-role="controlgroup" data-theme="b" data-type="horizontal">
+                    <legend class="ui-mini" data-mini="true">显示详情:</legend>
+                    <input type="radio" name="filter-detail" id="filter-detail" value="on" class="ui-mini" data-mini="true">
+                    <label for="filter-detail" data-mini="true">是</label>
+                    <input type="radio" name="filter-detail" id="filter-detail-no" value="off" checked="checked" data-mini="true">
+                    <label for="filter-detail-no" class="ui-mini">否</label>
+                </fieldset>
+                <p id="filter_result"></p>
+            </div><!-- /panel -->
+            <div data-role="header">
+            	<a href="enter.html" rel="external" class="ui-btn ui-corner-all ui-shadow ui-icon-back ui-btn-icon-left ui-btn-icon-notext">HOME</a>
+                <h1>任务列表</h1>
+                <a href="#mypanel" id="dynamicPanel" data-icon="gear" class="ui-btn-right">筛选</a>
+                <!-- /navbar -->
+            </div>
+            <div data-role="content" >	
+                <ul data-role="listview" id="appContent" >
+                    <li class="getData">任务列表数据</li>
+                </ul>
+                
+            </div>
+            <div data-role="footer" >
+            	
+                <h4><a class="ui-btn ui-shadow ui-corner-all ui-icon-carat-d" onClick="loadMoreItem()">加载更多</a></h4>
+            </div>
+    	</div><!--page-->
+
+    </body>
+    <script type="text/javascript">
+		var myApp = {};
+		myApp.loadListStart = 0;
+		myApp.loadListStep = 3;
+		myApp.allApp = false;
+		myApp.timeDescend = true;
+		myApp.detail = false;
+		
+		function loadMoreItem(){
+			getFormatApps();
+			refreshPage($('.ui-page-active'));
+		}
+		$().ready(function(e) {
+            getFormatApps();
+			$('#dynamicPanel').click(function(){
+				console.log("call panel");
+				$( "#mypanel").trigger( "updatelayout" );
+				
+				});
+		    $( "#mypanel" ).panel({
+			  close: function( event, ui ) {
+				  console.log("close");
+				  console.log("签字筛选"+$('#filter-assigned:checked').val()=="on");
+				  
+				  //如果只筛选签字过的
+				  if($('#filter-assigned:checked').val()=="on"){
+					  myApp.allApp = true;
+				  }
+				  else{
+					  myApp.allApp = false;
+				  }
+				  //筛选时间顺序
+				  if($('#timeDescend-On:checked').val()=="on"){
+					  myApp.timeDescend = false;
+				  }
+				  else{
+					  myApp.timeDescend = true;
+				  }
+				  //筛选细节显示
+				  if($('#filter-detail:checked').val()=="on"){
+					  myApp.detail = true;
+				  }
+				  else{
+					  myApp.detail = false;
+				  }
+				  
+				  $("#appContent").html("");
+				  myApp.loadListStart = 0;
+				  myApp.loadListStep = 3;
+				  getFormatApps();
+				  
+			   }
+			});
+        });
+	
+		function getFormatApps(start,step,allApp,timeReverse,detail){
+			
+			if(typeof(start)==='undefined') start = myApp.loadListStart;
+   			if(typeof(step)==='undefined') step = myApp.loadListStep;
+   			if(typeof(allApp)==='undefined') allApp = myApp.allApp;
+   			if(typeof(timeReverse)==='undefined') timeReverse = myApp.timeDescend;
+   			if(typeof(detail)==='undefined') detail = myApp.detail;
+			//console.log("getData init");
+			var url = "getAppList.php?start="+start+"&&step="+step+"&&Assigned="+allApp+"&&timeDescend="+timeReverse+"&&detail="+detail;
+			console.log(url);
+			$.post(url,function(data){
+				console.log(data);
+				var obj = jQuery.parseJSON(data);
+				 //按进入时间排序
+				 var output="";
+				 console.log("细节"+detail);
+				 //不显示细节
+				 if(detail == false){
+					 $.each(obj, function(i, item) {
+						output += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+obj[i].wpID+"\"><h2>"+obj[i].wpID+"---"+obj[i].appName;
+						output +=  "<strong>"+obj[i].appType+"</strong>"+obj[i].appOperator+"</h2></a>";
+						output += "</li>";
+					});
+				 }
+				 else{
+					$.each(obj, function(i, item) {
+						output += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+obj[i].wpID+"\"><h3>包号:"+obj[i].wpID+"----货品名称:"+obj[i].appName;
+						output +=  "<strong>----操作类型"+obj[i].appType+"</strong></h3><h3>操作人:"+obj[i].appOperator+"-----麦头:"+obj[i].appMaitou+"-----货物量:"+obj[i].appCount+"</h3></a>";
+						output += "</li>";
+					}); 
+				 }
+				$("#appContent").append(output);
+				 //$("#appContent").html(output);
+				 $("#appContent").trigger("create");//.listview('refresh');
+				 //addAppListListen();
+				 refreshPage($('.ui-page-active'));
+				 myApp.loadListStart = start+step;
+			});
+			
+			
+		}
+		
+		function refreshPage(page){
+			// Page refresh
+			page.trigger('pagecreate'); //$('.ui-page-active').trigger('pagecreate')
+			$('.ui-page-active ul').listview('refresh');
+		}
+    </script>
+
+</html>

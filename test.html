@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html><head>
+    <meta charset="UTF-8">
+
+    <script class="include" type="text/javascript" src="js/jquery.js"></script>
+  </head>
+<body>
+	<div id="hint"></div>
+
+
+</body>
+<script >
+	$('#hint').html("test");
+	var tt = new Array();
+
+	tt[0] = new Array();
+	tt[0][1] = 32;
+
+	console.log(tt[0][1]);
+
+	$.ajax({ 
+				    type : "post", 
+				    url : "mobile/phpGetSlot.php",
+				    async : false, 
+				    success : function(data){
+				    	slots = jQuery.parseJSON(data);
+				    	console.log(slots[0].tsWareHouse);
+				    }
+				   });
+
+	$.ajax({ 
+				    type : "post", 
+				    url : "mobile/phpGetSlot.php?tsWareHouse=0",
+				    async : false, 
+				    success : function(data){
+				    	slots = jQuery.parseJSON(data);
+				    	for (var i = slots.length - 1; i >= 0; i--) {
+				    		//slots[i]
+				    		console.log(slots[i]);
+				    	};
+				    	//console.log(slots[0].tsPosRow);
+				    }
+				   });
+
+	console.log("三层");
+	$.ajax({ 
+				    type : "post", 
+				    url : "mobile/phpGetSlot.php?tsWareHouse=0&&tsPosRow=1",
+				    async : false, 
+				    success : function(data){
+				    	slots = jQuery.parseJSON(data);
+				    	for (var i = slots.length - 1; i >= 0; i--) {
+				    		//slots[i]
+				    		console.log(slots[i]);
+				    	};
+				    	//console.log(slots[0].tsPosRow);
+				    }
+				   });
+	console.log("4层");
+	$.ajax({ 
+				    type : "post", 
+				    url : "mobile/phpGetSlot.php?tsWareHouse=0&&tsPosRow=1&&tsPosCol=2",
+				    async : false, 
+				    success : function(data){
+				    	//console.log(data);
+
+				    	slots = jQuery.parseJSON(data);
+				    	for (var i = slots.length - 1; i >= 0; i--) {
+				    		//slots[i]
+				    		console.log(slots[i]);
+				    	};
+				    	//console.log(slots[0].tsPosRow);
+				    }
+				   });
+
+</script>

@@ -1,4 +1,18 @@
-<?php 
+<?php
+	//根据Query 获取数据表长度
+	function getTableLengthByQuery($query){
+		global $connection;
+		if($stmt = mysqli_prepare($connection, $query) ){
+			mysqli_stmt_execute($stmt);
+			mysqli_stmt_store_result($stmt);
+			return mysqli_stmt_num_rows($stmt);
+		}
+		if(!$stmt){
+		 echo '[we have a problem]: '.mysqli_error($connection);
+		 
+		}
+		return 0;
+	}
 	//取得数据表长度
 	function getTableLength($tableName="wtrays"){
 		global $connection;
@@ -37,7 +51,7 @@
 		//$query ="SHOW COLUMNS FROM ".$tableName;
 		//var_dump(mysqli_query($connection, $query));
 		$query = "SELECT * FROM  `".$tableName."` WHERE `".$Name."` = ".$Value;
-		echo $query;
+		//echo $query;
 		$stack = array();
 		if ($result = mysqli_query($connection, $query)) {
 			while($row = mysqli_fetch_array($result)){
@@ -63,6 +77,74 @@
 			array_push($trays,$row["wtID"]);
 		}
 		return $trays;
+	}
+	
+	//**************通用插入更新
+	//插入一个新的item
+	function insert($table, $para,$data){
+		global $connection;
+		$query = "INSERT INTO ".$table." (";
+			
+		foreach($para as $attr){
+			$query .= $attr;
+			if(array_search($attr,$para) != (count($para)-1)) $query .= ", ";
+		}
+		$query .= ") VALUES (";
+		for( $i = 0; $i<count($data); $i++){
+			
+			$query .= "'".$data[$i]."'";
+			if($i < count($data)-1) $query .= ", ";
+		}
+		$query .= ")";
+
+		$result = mysqli_query($connection,$query);
+		if(!$result){
+		 echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		}else{
+			echo "成功添加".$data[0].$data[1]."到".$table;
+		}
+	}
+	//更新一个item
+	function update($table, $para,$data){
+		//更新参数/值中的第一个是查找key
+		global $connection;
+		$return  = "";
+		$query = "UPDATE `".$table."` SET ";
+		for($i = 1; $i<count($para); $i++){
+			if($i != 1)
+				$query .= ", ";
+			$query .= "`".$para[$i]."`=\"".$data[$i]."\"";	
+		}
+		$query .= " WHERE `".$para[0]."` = \"".$data[0]."\"";
+		
+		$result = mysqli_query($connection,$query);
+		if(!$result){
+		 echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		 $return .='[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		}else{
+			echo "成功修改:[";
+			$return .= "成功修改:[";
+			for($i=0; $i<count($para); $i++){
+				echo $para[$i].":".$data[$i]."|";
+				$return .= $para[$i].":".$data[$i]."|";
+			}
+			echo "]";
+			$return .="]";
+		}
+		return $return;
+	}
+	//删除一个item
+	function delete($table, $para,$data){
+		global $connection;
+		$query = "DELETE FROM `".$table."`";
+		$query .= " WHERE `".$para."` = \"".$data."\"";
+		
+		$result = mysqli_query($connection,$query);
+		if(!$result){
+		 echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		}else{
+			echo "成功删除".$table."中的元素";
+		}
 	}
 	
 	//插入一个新的货物包
@@ -102,7 +184,6 @@
 		$result = mysqli_query($connection,$query);
 		if(!$result){
 		 echo '[we have a problem]: '.mysqli_error($connection);
-		 
 		}
 	}
 	
@@ -152,7 +233,7 @@
 		 echo "<br>".'[we have a problem]: '.mysqli_error($connection);
 		}
 	}
-	//删除选定的货物包
+	/*删除选定的货物包
 	function deleteWarePackages($data){
 		echo "cal function deleteWarePackages";
 		global $connection;
@@ -163,18 +244,14 @@
 		if(!$result){
 		 echo "<br>".'[we have a problem]: '.mysqli_error($connection);
 		}
-	}	
+	}*/	
 	//获得通过page货物包
 	function getWarePackagebyPage($page = 1){
 		global $connection;
-		
-		$query = "SELECT * FROM `warepackages` WHERE `wpID` =".$page;
+		$query = "SELECT * FROM `warePackages` WHERE `wpID` =".$page;
 		if ($result = mysqli_query($connection, $query)) {
 			
 			while($row = mysqli_fetch_array($result)){
-				//var_dump($row);
-				//echo "<p>ID:".$row['wpID']."  -  关闭信息".$row["wCloseInfo"]."</p>";
-				
 				return $row;
 			}
 		}
@@ -410,6 +487,19 @@
 			echo "失败";
 			*/
 	}
+	
+	function curPageURL() {
+	 $pageURL = 'http';
+	 if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+	 $pageURL .= "://";
+	 if ($_SERVER["SERVER_PORT"] != "80") {
+	  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+	 } else {
+	  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+	 }
+	 return $pageURL;
+	}
+	
 
 ?>
 

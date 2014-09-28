@@ -21,7 +21,7 @@
 	echo "Socket created \n";
 	
 	//连接Socket
-	if(!socket_connect($sock , '192.168.1.106' , 8001))
+	if(!socket_connect($sock , '192.168.1.30' , 8001))
 	{
 		$errorcode = socket_last_error();
 		$errormsg = socket_strerror($errorcode);

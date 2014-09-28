@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="WSLayout">
+		<meta name="author" content="Ref">
+
+
+		<title>维尔豪斯仓库管理</title>
+		<style>
+		.hasBorder{
+			border: 1px solid blue;
+		}
+		.scrolls{
+			overflow-x: scroll;
+	    overflow-y: hidden;
+	    white-space:nowrap
+		}
+		</style>
+
+		<!-- Bootstrap core CSS -->
+		<link href="dist/css/bootstrap.css" rel="stylesheet">
+	</head>
+	<body >
+		<div class="container">
+
+			<div class="row hasBorder">
+				<div class='col-lg-3'>123</div>
+				<div class='col-lg-6'>123</div>
+				<div class='col-lg-3'>123</div>
+			</div>
+
+			<div class="row hasBorder">
+				<div class="col-lg-3"> long row</div>
+				<div class="col-lg-9 scrolls">
+					long rowlong rowlong rowlong r
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-lg-3 navbar-example" >
+					<ul class="nav nav-pills nav-stacked rounded"   id="sideNav" style="position:fixed">
+					  <li><a href="#1" class="navClick">代理商</a></li>
+					  <li>
+					  	<a href="#2"  class="navClick" data-toggle="collapse" data-target="#appsNav" data-parent="#sideNav">货单</a>
+					  	<ul class="nav collapse nav-pills nav-stacked rounded" id="appsNav">
+					  		<li><a href="#21"  class="navClick">入库单</a></li>
+					  		<li><a href="#22"  class="navClick">出库单</a></li>
+					  		<li><a href="#23"  class="navClick">发库单</a></li>
+					  	</ul>
+					  </li>
+					  <li>
+					  	<a href="#3" class="navClick" data-toggle="collapse" data-target="#wareNav" data-parent="#sideNav">仓库</a>
+					  	<ul class="nav collapse" id="wareNav">
+					  		<li><a href="#31"  class="navClick">cangku1</a></li>
+					  		<li><a href="#32"  class="navClick">cangku2</a></li>
+					  		<li><a href="#33"  class="navClick">cangku3</a></li>
+					  	</ul>
+					  </li>
+					  <li><a  href="#4">配置</a></li>
+					</ul>
+				</div>
+
+
+				<div class="col-lg-9">
+					<div class="panel panel-default resp" id="1">
+					  <div class="panel-body">
+					    代理商页面<br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br>
+					  </div>
+					</div>
+
+					<div class="panel panel-default resp" id="21">
+					  <div class="panel-body">
+					    入库单<br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br>
+					  </div>
+					</div>
+
+					<div class="panel panel-default resp" id="22">
+					  <div class="panel-body">
+					    出库单>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<br>>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<b
+					  </div>
+					</div>
+
+					<div class="panel panel-default resp" id="3">
+					  <div class="panel-body">
+					    仓库1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<b
+					  </div>
+					</div>
+
+					<div class="panel panel-default resp" id="31">
+					  <div class="panel-body">
+					    仓库1页面>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<b
+					  </div>
+					</div>
+
+					<div class="panel panel-default resp" id="32">
+					  <div class="panel-body">
+					    仓库1面>1<br><br>1<br><br>1<br><br>1<br><br>1<br><br>1<b
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="my"></div>
+
+	</body>
+	
+	<!-- Bootstrap core js -->
+	<script src="dist/js/jquery-1.11.1.js"></script>
+  <script src="dist/js/bootstrap.min.js"></script>
+  <script src="dist/js/jquery.event.swipe.js" type="text/javascript"></script>
+  <script src="dist/js/jquery.event.move.js" type="text/javascript"></script>
+  <script src="dist/js/unslider.min.js"></script>
+
+  <script>
+		$('#my').html('thanks jquery');
+		/*
+		$('.navbar-example').on("activate.bs.scrollspy",function(event){
+			console.log("activate.bs.scrollspy");
+			console.log($(this));
+			console.log($('li[class="active"] a').attr("href"));
+			var div = $('li[class="active"] a').attr("href")
+			$(".resp").hide();
+			$(div).show();
+			console.log($(div));
+		});*/
+		$(".resp").hide();
+		$(".navClick").on("click",function(event){
+			$(".resp").hide();
+			$($(this).attr('href')).show();
+			$('.navClick').parent().removeClass("active");
+			$(this).parent().addClass('active');
+			console.log($(this).parent());
+
+		});
+	</script>
+</html>

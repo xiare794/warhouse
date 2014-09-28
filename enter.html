@@ -1,0 +1,94 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ware House Mobile Cient</title>
+<link href="jquery-mobile/jquery.mobile.theme-1.0.min.css" rel="stylesheet" type="text/css"/>
+<link href="jquery-mobile/jquery.mobile.structure-1.0.min.css" rel="stylesheet" type="text/css" />
+<!--  js -->
+<script src="jquery-mobile/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="jquery-mobile/jquery.mobile-1.0.min.js" type="text/javascript"></script>
+
+</head> 
+<body> 
+
+<div data-role="page" id="page">
+	<div data-role="header">
+		<h1>引导页</h1>
+	</div>
+	<div data-role="content">	
+		<ul data-role="listview">
+			<li><a href="#page2">领取任务</a></li>
+            <li><a href="#page3">分配托盘</a></li>
+			<li><a href="#page4">其他任务</a></li>
+		</ul>		
+        
+	</div>
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div>
+</div>
+
+<div data-role="page" id="page2">
+	<div data-role="header">
+		<h1>任务列表</h1>
+	</div>
+	<div data-role="content" >	
+		<ul data-role="listview" id="appContent" >
+        	<li class="getData">刷新数据</li>
+        </ul>
+	</div>
+	<div data-role="footer">
+		<h4>Page Footer</h4><a class="getData" >刷新数据</a>
+	</div>
+</div>
+
+<div data-role="page" id="page3">
+	<div data-role="header">
+		<h1>Page Three</h1>
+	</div>
+	<div data-role="content">	
+		Content		
+	</div>
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div>
+</div>
+
+<div data-role="page" id="page4">
+	<div data-role="header">
+		<h1>Page Four</h1>
+	</div>
+	<div data-role="content">	
+		Content		
+	</div>
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div>
+</div>
+
+</body>
+<script type="application/javascript">
+	function getFormatApps(){
+		$.post("http://192.168.1.102/ws/mobile/getAppList.php",function(data){
+			var obj = jQuery.parseJSON(data);
+			 var output="";
+			 $.each(obj, function(i, item) {
+				output += "<li><h4>"+obj[i].wpID+"---"+obj[i].appName+"</h4>";
+				output +=  "<p><strong>"+obj[i].appType+"</strong>"+obj[i].appOperator+"</p>";
+				output += "</li>";
+			});
+			 $("#appContent").html(output);
+			 $("#appContent").listview('refresh');
+		});	
+	}
+	$( document ).ready(function() {
+		getFormatApps();
+		$('.getData').click(function(){
+			getFormatApps();
+			});
+	});
+	
+
+</script>
+</html>

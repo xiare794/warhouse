@@ -6,19 +6,19 @@
 	include "coreFunction.php";
 	
 	if( isset($_GET['appID'] )){
-		echo "<ul class=\"list-group\" id=\"appSignedUl\">";
 		$theApp = getAPPbyID($_GET['appID']);
-			echo "<li class=\"list-group-item\" id=\"appKey\" key=\"".$theApp['appID']."\">APPID：".$theApp['appID']."</li>";
-			echo "<li class=\"list-group-item\">APP名称:".$theApp['appName']."</li>";
-			echo "<li class=\"list-group-item\">货物包:".$theApp['wpID']."</li>";
-			echo "<li class=\"list-group-item\">".$appTypeTextArray[$theApp['appType']]."</li>";
-			echo "<li class=\"list-group-item\">目前在托盘#".$theApp['appFromTrayID']."上</li>";
-			echo "<li class=\"list-group-item\">状态：".$statusTextArray[$theApp['appStatus']]."</li>";
+		$theTrays = getTraysbyAppID($_GET['appID']);
+		//var_dump($theTrays);
+		
+		
+		echo "库单信息APP[".$theApp['appID']."]-WP[".$theApp['wpID']."]";
+		echo "<span class=\"pull-right\">入库编号:<span id=\"AppSignBoxInStockID\">".$theApp['InStockID']."</span></span>";
+		echo "<ul class=\"list-group\" id=\"appSignedUl\" key=\"".$theApp['appID']."\">"; //key属性确定了签署哪一页-->
 			echo "<li class=\"list-group-item\">";
 				if($theApp['appSignned'])
 				echo "未签署";
 			echo "</li>";
-			echo "<li class=\"list-group-item alert-info\"> <div class=\"alert alert-info\">签署此页面意味着允许对货物包".$theApp['wpID']."进行".$appTypeTextArray[$theApp['appType']]."对应的操作</div></li>";
+			echo "<li class=\"list-group-item alert-info\"> <code>".$_GET['userName']."</code><br>正在签署货物包<code>".$theApp['appName'].$theApp['wpID']."</code>的<span id=\"AppSignBoxAppType\">".$appTypeTextArray[$theApp['appType']]."</span>操作</div></li>";
 		echo "</ul>";
 	}
 	

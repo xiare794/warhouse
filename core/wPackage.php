@@ -1,6 +1,21 @@
+<?php require_once("config.php"); //session
+?>
 <!DOCTYPE html>
 <html lang="cn">
   <head>
+  	<?php
+  		include("_db.php"); 
+  	 	include("functions_manage.php"); 	
+  		if(!isset ($_SESSION['user']) ){
+  			$_SESSION['previewPage'] = curPageURL();
+  			//echo curPageURL();
+  			echo "<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=login.php\">";
+  		}
+  		else {
+  			;
+  			//nothing
+  		}
+  	?>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -62,8 +77,7 @@
 
   <body>
 	<?php include("header.php"); ?>
-	<?php include("_db.php"); ?>
-	<?php include("functions_manage.php"); ?>
+	
 	<?php 
 		//如果是插入，使用_POST作为
 		if(isset($_POST['PackageSubmit']) )
@@ -77,8 +91,10 @@
 		$tatalPage = ceil($recordsCount/$pagesize);
 	?>
 	<div class="container" style="margin-top:60px">
-		<?php var_dump($_POST);
-			var_dump($_GET);
+		<?php 
+			//var_dump($_POST);
+			//var_dump($_GET);
+			//var_dump($_SESSION);
 		?>
 		<div class="row">
 			<div class="col-lg-8">
@@ -123,7 +139,13 @@
 					<div class="panel-body" id="slotPreview">
 					
 					</div>
-			</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">仪器绑定<span class="badge pull-right">rifd设备列表</span><button id="slotsToggle" class="btn btn-info pull-right btn-xs">显示/隐藏</button></div>
+					<div class="panel-body" >
+						<?php include "deviceList.php";?>
+					</div>
+				</div>
 			</div>
 			
 		</div>

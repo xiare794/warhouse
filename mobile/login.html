@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="UTF-8">
+        <title>登陆界面</title>
+
+	<!-- 第二套 -->
+    <link rel="stylesheet" href="jquery-mobile/jquery.mobile-1.4.0.min.css" />
+    <link rel="stylesheet" href="jqplot/jquery.jqplot.css"  >
+    <script type="text/javascript" src="jquery-mobile/jquery-1.9.1.js"></script>
+    <script src="jquery-mobile/jquery.mobile-1.4.0.min.js"></script> 
+    <script type="text/javascript" src="jqplot/jquery.jqplot.js"></script>
+    
+    <script type="text/javascript" src="jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+	<script type="text/javascript" src="jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+    </head>
+    <body>
+    	
+        
+        <div data-role="page" id="page2" class="ui-mini">
+        	<div data-role="content" >	
+                <form method="POST" action="getUsers.php" id="loginForm">
+                    <label for="login_username">用户:</label><br>
+                    <input type="text" name="userName" id="login_username" /><br>
+                    <label for="login_password">密码:</label><br>
+                    <input type="password" name="Password" id="login_password" /><br>
+                    
+                </form>	
+                <button id="login_submit" data-theme="a">Submit</button>
+             </div>
+    	</div><!--page-->
+        <script>
+			$().ready(function(e) {
+				$('#login_submit').click(function(){
+					console.log('submit')
+					$.post( "getUsers.php", $( "#loginForm" ).serialize())
+					.done(function(data){
+						var obj = jQuery.parseJSON(data);
+						console.log("获取符合用户"+obj.length+"名");
+						if(obj.length > 0){
+							alert("允许登陆");
+						}
+					});
+				});
+            });
+		</script>
+    </body>
+
+</html>

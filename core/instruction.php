@@ -1,3 +1,4 @@
+<?php require_once("config.php"); //session?>
 <!DOCTYPE html>
 <html lang="cn">
   <head>
@@ -9,7 +10,7 @@
     <title>使用配置说明</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
   </head>
 
   <body>
@@ -108,6 +109,25 @@ $actList = array(
 	"出库完成"=>"fin")
 );
 				</pre>
+				<pre class="prettyprint">  web管理地图/
+				  <span class="muted">├──</span><a href="wPackage.php">货物包管理/</a>
+				  <span class="muted">├──</span> <a href="#">仓库管理</a>/
+				  <span class="muted">	└──</span> <a href="setHouse.php">创建仓库模型</a>
+				  <span class="muted">├──</span> 托盘管理/
+				  <span class="muted">	└──</span> <a href="trayList.php">托盘列表</a>/
+				  <span class="muted">├──</span> 人员管理/
+				  <span class="muted"> 	├──</span> docs.css
+				  <span class="muted">	└──</span> <a href="userManage.php">工作分配列表</a>/				  
+				  <span class="muted">├──</span> 留空
+				  <span class="muted">├──</span> 留空
+				  <span class="muted">├──</span> <a href="setHouse.php">创建仓库模型</a>
+				  <span class="muted">└──</span> <a href="taskToDo.php">准备进行的工作</a>
+				  <span class="muted">    ├──</span> <a href="deviceList.php">设备列表</a>
+				  <span class="muted">    ├──</span> 留空
+				  <span class="muted">    ├──</span> 留空
+				  <span class="muted">    ├──</span> 留空
+				  <span class="muted">    └──</span> 留空
+				</pre>
 			    </div>
 		  </div>
 		</div>
@@ -115,7 +135,7 @@ $actList = array(
 	<!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
   </body>
 </html>

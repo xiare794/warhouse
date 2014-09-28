@@ -1,8 +1,16 @@
+<html>
+	<head>
+	<meta charset="utf-8">
+	
+	</head>
+	
+	<body>
+
 <?php
 	ini_set('display_errors','On');
 	error_reporting(E_ALL);
 	//local var
-	$host = "localhost";
+	$host = "192.168.1.10";
 	$databaseName = "stockDB";
 	$user = "xiare794";
 	$pass = "123";
@@ -79,9 +87,12 @@
 	waID INT NOT NULL AUTO_INCREMENT, 
 	PRIMARY KEY(waID),
 	waName CHAR(20),
+	waType CHAR(20),
 	waTel CHAR(20),
 	waAddr CHAR(50),
-	waContact CHAR(20),
+	waEmail CHAR(20),
+	waQuan INT,
+	waCurrLog CHAR(100),
 	waNote CHAR(100)
 	)";
 	if (mysqli_query($connection,$query))
@@ -245,4 +256,29 @@
 	  echo "Error creating table 制作单件货物数据表: " . mysqli_error($connection);
 	  }
 	  
+	echo "<br><br>";
+	$connection=mysqli_connect($host,$user,$pass,$databaseName);
+	$query = "CREATE TABLE wUsers 
+	(
+	userID INT NOT NULL AUTO_INCREMENT, 
+	PRIMARY KEY(userID),
+	wuName CHAR(20),
+	wuNamePY CHAR(30),
+	wuPassword CHAR(50),
+	admin INT,
+	manager INT,
+	operator INT
+	)";
+	if (mysqli_query($connection,$query))
+	  {
+	  echo "Database table created successfully";
+	  }
+	else
+	  {
+	  echo "Error creating table 制作用户数据表: " . mysqli_error($connection);
+	  }
+	  
 ?>
+
+	</body>
+</html>

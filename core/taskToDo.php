@@ -26,7 +26,7 @@
 			  height: 120px;
 			  padding: 0px;
 			  margin: 2px;
-			  font-size: 20px;
+			  font-size: 12px;
 			  text-align: center;
 			  border: 1px solid #ddd;
 			  list-style: none;
@@ -56,8 +56,8 @@
 
     <div class="container">
     	<div class="row">
-    		<div class="col-lg-4">
-    			<h1 class="demo-headline">待入库</h1>
+    		<div class="col-md-4 col-xs-4 ">
+    			<h1 class="">待入库</h1>
     			<?php
     				include "coreFunction.php";
     				$taskPool = getSignedApp("in");
@@ -65,7 +65,7 @@
     				//验证人员
     				echo "<ul class=\"bs-glyphicons\">";
     					for($i=0; $i<count($taskPool); $i++){
-    						echo "<li>任务".$i.":".$taskPool[$i]['appName']."--等待执行".$statusTextArray[$taskPool[$i]['appStatus']]."</li>";
+    						echo "<li>任务".$i.":".$taskPool[$i]['appName']."--等待执行".$statusTextArray[$taskPool[$i]['appStatus']].$taskPool[$i]['appOperator'].$taskPool[$i]['appFromTrayID']."</li>";
     					}
     				echo "</ul>";
     				//验证托盘
@@ -73,26 +73,27 @@
     				echo date('o-F-d aG:i:s') . "\n";
     			?>
     		</div>
-    		<div class="col-lg-4">
-    			<h1 class="demo-headline">待出库</h1>
+    		<div class="col-md-4 col-xs-4">
+    			<h1 >待出库</h1>
     			<?php
        				$taskPool = getSignedApp("out");
     				//验证人员
     				if(count($taskPool)>0){
 	    				echo "<ul class=\"bs-glyphicons\">";
 	    					for($i=0; $i<count($taskPool); $i++){
-	    						echo "<li>任务".$i.":".$taskPool[$i]['appName']."--等待执行".$statusTextArray[$taskPool[$i]['appStatus']]."</li>";
+	    						echo "<li>任务".$i.":".$taskPool[$i]['appName']."--等待执行".$statusTextArray[$taskPool[$i]['appStatus']].$taskPool[$i]['appOperator']."</li>";
 	    					}
 	    				echo "</ul>";
 	    			}
 	    			else {
 	    				echo "<h4>尚无等待出库的货物</h4>";
 	    			}
-					
-					echo $_SERVER["PATH"];
     			?>
     		</div>
-    		<div class="col-lg-4">
+    		<div class="col-md-4 col-xs-4" id="trayBind">
+    			
+    		
+    		
     		</div>
 	
 	</div>
@@ -114,6 +115,23 @@
      }
      setTimeout('myrefresh()',100000);
      //指定1秒刷新一次 
+    </script>
+    <script type="text/javascript">
+    	$().ready( function () {
+    		$.getJSON( "../trayBind.json", function( data ) {
+    		  var items = [];
+    		  $.each( data, function( key, val ) {
+    		    items.push( "<li id='" + key + "'>" + val['deviceID'] + "</li>" );
+    		  });
+    		 
+    		  $( "<ul/>", {
+    		    "class": "my-new-list",
+    		    html: items.join( "" )
+    		  }).appendTo( "#trayBind" );
+    		});
+    	
+    	
+    	} )
     </script>
   </body>
 </html>
