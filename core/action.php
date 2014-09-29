@@ -92,13 +92,12 @@
 						</div>
 
 						<div class="navbar-form navbar-left" role="search">
-			        <div class="form-group">
-			          <input type="search" id="actionSearchInput" class="form-control" placeholder="筛选记录">
-			        </div>
-			        
-			      </div>
+					        <div class="form-group">
+					          <input type="search" id="actionSearchInput" class="form-control" placeholder="筛选记录">
+					        </div>
+				        </div>
 			  
-					</div>
+					 </div>
 				</div>
 
 				
@@ -139,12 +138,13 @@
 											"loadStock":"装载货物",
 											"unloadStock":"取出货物",
 											"finAppIn":"完成入任务",
-											"finAppOut":"完成出任务"
-
+											"finAppOut":"完成出任务",
+											"traysIn":"入门操作",
+											"traysOut":"出门操作"
 
 										};
 		console.log("测试type");
-		console.log( actionType["trayUnLoad"]);
+		console.log( actionType["traysIn"]);
 		console.log(actionType);
 
 		console.log(userName);
@@ -189,6 +189,7 @@
 		
 		//生成表格形式 返回字符串
 		function FormPanelTable(obj,attr,head,link,title){
+			console.log(obj);
 			var output = "";
 			output 	+= "<table class=\"table table-condensed table-hover table-responsive\" style=\"font-size:10px;\"";
 			output 	+= "<thead>";

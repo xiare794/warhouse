@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+	<!--2014.09.24
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +9,20 @@
 
 
 		<title>托盘</title>
-		<!--<link href="dist/css/bootstrap.css" rel="stylesheet"> -->
+		
 	</head>
-	<body >
+	<body >-->
 		<!-- agent container -->
-			<div id="traysBody" class="row" >
+			<div id="traysBody" class="row" key="<?php if( isset($_GET['trayKey'])) echo $_GET['trayKey'];?>">
 				<div class="panel panel-default scrolls-both" id="traysContainer">
+					
 				</div>
 			</div>
 
 			
-		
+	<!--	
 	</body>
-	
+	-->
 	<!-- Bootstrap core js 
 	<script src="dist/js/jquery-1.11.1.js"></script>
   <script src="dist/js/bootstrap.min.js"></script>-->
@@ -46,14 +48,55 @@
 				var link = "wSlotID";
 				console.log(obj);
 				$('#traysContainer').html( FormPanelTable(obj,attr,head,link,"托盘列表"));
+				
+				//预支筛选
+				var str = $('#traySearchInput').val();
+				$(".trayRow").each(function(){
+					$(this).hide();
+					if($(this).html().match(str)){
+						$(this).show();
+					}
+				});
 	    }
 	  });
+	  
+	  
+	  	//增加过滤
+		$('#traySearchInput').on("keyup",function(event){
+			if(event.which == 13){
+				var str = $('#traySearchInput').val();
+
+				$(".trayRow").each(function(){
+					$(this).hide();
+					if($(this).html().match(str)){
+						$(this).show();
+					}
+				});
+
+			}
+		});
 	  
 		
 		//生成表格形式 返回字符串
 		function FormPanelTable(obj,attr,head,link,title){
 			//console.log(obj);
-			var output = "<div class=\"panel-heading\" \>"+title+"</div>";
+			var output = "<div class=\"navbar navbar-default\" role=\"navigation\">";
+			output  += 		"<div class=\"container-fluid\">";
+			output  += 			"<div class=\"navbar-header\">";
+			output  +=				"<a class=\"navbar-brand\" href=\"#\">"+title+"</a>";
+			output  +=			"</div>";
+			output  +=			"<div class=\"navbar-form navbar-left\" role=\"search\">";
+			output  +=				"<div class=\"form-group\">";
+			output  +=					"<input type=\"search\" id=\"traySearchInput\" class=\"form-control\" placeholder=\"托盘关键字\" value=\""+$('#traysBody').attr("key")+"\">";
+			output  +=				"</div>";
+			output  +=			"</div>";
+			output  +=		"</div>";
+			output  +=	 "</div>";
+			/*
+			var output = "<div class=\"panel-heading navbar-header\" \>"+title;
+			output  += "<div class=\"form-group\"><input type=\"search\" id=\"traysSearchInput\" class=\"form-control\" placeholder=\"筛选托盘\"> </div>"; 
+			output  += "</div>";
+			*/
 			output 	+= "<div class=\"panel-body\">";
 
 			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"";
@@ -66,7 +109,7 @@
 
 			var previousAg = "";
 			for(var i in obj){
-				output += "<tr class=\"agentRow\">";
+				output += "<tr class=\"trayRow\">";
 				for(var j in attr){
 					//加跳转
 					if(link == attr[j]){

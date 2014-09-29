@@ -1,4 +1,5 @@
 <?php
+	//2014.09.28
 	//PHP search Function Union 
 	//contorl by GET key 
 	//like phpSearch.php?rfid=str

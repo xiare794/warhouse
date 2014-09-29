@@ -1,3 +1,4 @@
+<!-- 2014.09.28 -->
 <?php require_once("config.php"); //session
 ?>
 <!DOCTYPE html>
@@ -122,38 +123,32 @@
 				  </li>
 				  <li><a  class="navLink">配置</a></li>
 				</ul>
+				
 				<br>
 
-				<div id="sideOption" class="nav-stacked rounded">
-					
-					<p>筛选库单列表<br></p>
+				<div id="sideOption" class="nav rounded">
+					<!-- 库单筛选-->
+					<div id="appsOption" style="display: none;">
+						<p>筛选库单列表<br></p>
 
-					<!--
-					<div class="dropdown input-sm form-group" id="applistFilterDiv" >
-					  <label>类型</label>
-					  <button class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">筛选<span class="caret"></span></button>
-					  <span class="dropdown-arrow"></span>
-					  <ul class="dropdown-menu">
-							<li class="selected"><a id="allAppsbtn">全部</a></li>
-							<li><a id="AppUnComp">未完成</a></li>
-							<li><a id="AppUnSign">等签字</a></li>
-							<li><a id="AppIn">入库单</a></li>
-							<li><a id="AppOut">出库单</a></li>
-					  </ul>
+						<div class="form-group input-sm" style="height:70px">
+							<label>时间</label><br>
+							<input id="start-date" type="date" style="width:150px"></input><br>
+							<input id="end-date" type="date" style="width:150px"></input>
+							<a class="btn  btn-primary btn-xs filterUpdate" style="padding:6px 6px"> <span class="glyphicon glyphicon-search" ></span></a>
+						</div>
+	
+						<div class="form-group input-sm"  ><br>
+							<label>关键字</label>
+							<input id="app-keyword" type="search" style="width:100px"></input>
+							<a class="btn  btn-primary btn-xs filterUpdate" style="padding:6px 6px"> <span class="glyphicon glyphicon-search"></span></a>
+						</div>
+						<div class="form-group input-sm">
+							<input type="checkbox" name="filterComplete" id="appFilterComplete" class="filterUpdate" checked="true"/>仅显示未完成
+							<input type="checkbox" name="filterDetail" id="appFilterDetail" class="filterUpdate" checked="true"/>精简显示
+						</div>
 					</div>
-					-->
-					<div class="form-group input-sm" style="height:70px">
-						<label>时间</label><br>
-						<input id="start-date" type="date" style="width:150px"></input><br>
-						<input id="end-date" type="date" style="width:150px"></input>
-						<a class="btn  btn-primary btn-xs filterUpdate" style="padding:6px 6px"> <span class="glyphicon glyphicon-search" ></span></a>
-					</div>
-
-					<div class="form-group input-sm" style="height:120px" ><br>
-						<label>关键字</label>
-						<input id="app-keyword" type="search" style="width:100px"></input>
-						<a class="btn  btn-primary btn-xs filterUpdate" style="padding:6px 6px"> <span class="glyphicon glyphicon-search"></span></a>
-					</div>
+					<!-- 代理商筛选-->
 				</div>
 			</div>
 
@@ -290,30 +285,32 @@
 								<label for="extraInfo" class="col-sm-2 control-label">备注</label>
 								<div class="col-sm-10"><input name="extraInfo" id="extraInfo" type="text" class="form-control flat" placeholder="备注"></div>
 						  </div>
+						  <!--
 						  <div class="form-group">
 							<label for="selectpicker" class="control-label col-sm-2">选择货物尺寸</label>
 							<div class="col-sm-10">
 								<select class="selectpicker" id="itemSizeSelect" name="itemSizeSelect">
-								  <option value="0">货代数据导入失败</option>
+								  <option value="0">尺寸导入失败</option>
 								</select>
 							</div>
 						  </div>
-							<div class="col-sm-4"></div>
-							<div class="col-sm-2"><button id="appOpPanelNew" type="submit" name="new"  class="btn-embossed btn btn-primary form-control">新建</button></div>
-						  	<div class="col-sm-2"><button id="appOpPanelEdit" style="display:none" type="submit" name="edit" class="btn-embossed btn btn-primary form-control">更新</button></div>
-						  	<div class="col-sm-2"><button id="appOpPanelDelete" style="display:none" type="submit" name="delete" class="btn-embossed btn btn-danger form-control">删除</button></div>
-						  	<div class="col-sm-2"><button id="appOpPanelGenerateOutApp" style="display:none" type="submit" name="newOut" class="btn-embossed btn btn-primary form-control">新建出库</button></div>
+						  -->
+							<div class="col-sm-8"></div>
+							<div class="col-sm-2" ><button id="appOpPanelNew" type="submit" name="new"  class="btn-embossed btn btn-primary form-control">新建</button></div>
+						  	<div class="col-sm-2" style="display:none"><button id="appOpPanelEdit"  type="submit" name="edit" class="btn-embossed btn btn-primary form-control">更新</button></div>
+						  	<div class="col-sm-2" style="display:none"><button id="appOpPanelDelete" type="submit" name="delete" class="btn-embossed btn btn-danger form-control">删除</button></div>
+						  	<div class="col-sm-2" style="display:none"><button id="appOpPanelGenerateOutApp"  type="submit" name="newOut" class="btn-embossed btn btn-primary form-control">新建出库</button></div>
 						  	
 							
 						      <div >
 								<input  id="formappID" name="appID"  style="display:none" >
 								<input  id="formappType" name="appType" value="in"  style="display:none">&nbsp;
 							  </div>
-							  
+							 <!-- 
 							 <div class="col-sm-12">
 								<p id="debug" class="form-group col-sm-6">debug info:</p>
 							 </div>
-							
+							 -->
 						
                         </form>
                         	
@@ -339,7 +336,7 @@
 		var userName = "<?php echo $_SESSION['user'];?>";
 		var userID = "<?php echo $_SESSION['userID'];?>";
 		//过滤基值
-		var appFilter = {page:1,db:"wApplications",printInfo:getFilter,para:null,key:null,count:0};
+		var appFilter = {page:1,db:"wApplications",printInfo:getFilter,para:null,key:null,count:0,filterComplete:true,filterDetail:true};
 		//无过滤输入
 		ReloadAppTxt();
 
@@ -353,12 +350,14 @@
 			$(linkName).parent().addClass('active');
 		}
 		$(".navLink").on("click",function(event){
-			$('#hintAlert').html("");
+			$('#hintAlert').html("123");
 			$(".navBlock").hide();
 			$($(this).attr('href')).show();
 			$('.navLink').parent().removeClass("active");
 			$(this).parent().addClass('active');
-
+	
+			console.log($(this).parent());
+			
 			if($(this).hasClass('inApp')){
 				appFilter.para = "AppIn";
 				appFilter.page = 1;
@@ -370,7 +369,7 @@
 				ReloadAppTxt();
 			}
 			if($(this).hasClass('allApp')){
-				//console.log($(this).hasClass('allApp'));
+				$('#appsOption').show();
 				appFilter.para = "AppAll";
 				appFilter.page = 1;
 				ReloadAppTxt();
@@ -383,7 +382,7 @@
 			//货代
 			if($(this).attr('href') == "#agentBox"){
 				console.log("货代包");
-				$('#agentBox').load("agents.php?appID=64");
+				$('#agentBox').load("agents.php");
 			}
 			//仓库盒子
 			if($(this).attr('href')=="#wareHouseBox"){
@@ -393,7 +392,7 @@
 			//托盘盒子
 			if($(this).attr('href') == "#trayBox"){
 				console.log("查找托盘");
-				$("#trayBox").load("trays.php#traysBody");
+				$("#trayBox").load("trays.php");
 			}
 
 			//动作
@@ -410,9 +409,10 @@
 		//新建货单UI
 	  function newAppShow(){
    		$('#appOpPanelNew').show();
-			$('#appOpPanelEdit').hide();
-			$('#appOpPanelDelete').hide();
-			$('#appOpPanelGenerateOutApp').hide();
+			$('#appOpPanelEdit').parent().hide();
+			$('#appOpPanelDelete').parent().hide();
+			$('#appOpPanelGenerateOutApp').parent().hide();
+			$('#appOpPanelNew').parent().show();
 			$('#createNewApp').html("新建货单");
 			$('#appName').val("");
 			$('#InStockID').val("");
@@ -427,10 +427,10 @@
 	  }
 		//新建出库单UI
 		function newOutAppShow(){
-			$('#appOpPanelNew').hide();
-			$('#appOpPanelEdit').hide();
-			$('#appOpPanelDelete').hide();
-			$('#appOpPanelGenerateOutApp').show();
+			$('#appOpPanelNew').parent().hide();
+			$('#appOpPanelEdit').parent().hide();
+			$('#appOpPanelDelete').parent().hide();
+			$('#appOpPanelGenerateOutApp').parent().show();
 			$('#InStockID').attr('readonly','readonly');
 
 			$('#createNewApp').html("生成出库单");
@@ -440,10 +440,10 @@
 		//修改库单UI
 		function editAppShow(){
 			console.log("修改模式");
-			$('#appOpPanelNew').hide();
-			$('#appOpPanelEdit').show();
-			$('#appOpPanelDelete').show();
-			$('#appOpPanelGenerateOutApp').hide();
+			$('#appOpPanelNew').parent().hide();
+			$('#appOpPanelEdit').parent().show();
+			$('#appOpPanelDelete').parent().show();
+			$('#appOpPanelGenerateOutApp').parent().hide();
 			$('#InStockID').attr('readonly','readonly');	
 		}
 		/* 页面响应结束*/
@@ -460,13 +460,26 @@
 			
 			if(this.para) str += "&&"+"para="+this.para;
 			
+			
 			this.key = $('#app-keyword').val();
 			if(this.key) str += "&&"+"key="+this.key;
+			
+			//筛选已完成
+			this.filterComplete = $('#appFilterComplete').is(":checked");
+			if(this.filterComplete) str += "&&"+"filterComplete=true";
+			else	str += "&&"+"filterComplete=false";
+			//筛选显示细节
+			this.filterDetail = $('#appFilterDetail').is(":checked");
+			if(this.filterDetail) str += "&&"+"filterDetail=true";
+			else	str += "&&"+"filterDetail=false";
+			
 			
 			this.startDate = $('#start-date').val();
 			this.endDate = $('#end-date').val();
 			if( (this.startDate) && (this.endDate) )
 			str += "&&"+"from="+this.startDate+"&&to="+this.endDate;
+			
+			console.log("筛选"+str);
 			return str;
 		}
 		$('#app-keyword').on("keyup",function(event){
@@ -483,18 +496,19 @@
 		
 		//重新加载库单列表
 		function ReloadAppTxt(){
-			console.log("页单筛选:"+appFilter.printInfo());
+			//console.log("页单筛选:"+appFilter.printInfo());
 
 			$.ajax({
 		    type : "get", 
 		    url : appFilter.printInfo(),
 		    async : false, 
 		    success : function(data){
+		    	//console.log(data);
 		    	$('#Apptxt').html(data);
-					updatePaginate();
+					//updatePaginate();
 	    	}
 	    });
-	    updatePaginate();
+	    //updatePaginate();
 	    /*
 			$('#Apptxt').load(appFilter.printInfo(),function(){
 
@@ -516,6 +530,7 @@
 		});
 		
 		//页面事件
+		/*
 		function updatePaginate(){
 
 			appFilter.itemLength = $("#phpAppCount").attr("num");//$('table').attr("count");
@@ -544,29 +559,14 @@
 									    	$('#Apptxt').html(data);
 									    	//addEditBtnEvent();
 												updatePaginate();
-								    	}
-								    });
-								    /*
-										$("#Apptxt").load(appFilter.printInfo(),function () { 
-											//加载需要从getPage内响应的元素
-											$('.btn-succss').click(function(){
-												$('#modalSign').load("component.php?appID="+$(this).attr('id'));
-											});
-											//签发按钮
-											$('#signedBtn').click(function(){
-												var hint = "<div class=\"alert alert-success\" id=\"hintAlert\"><a href=\"#\" class=\"alert-link\">成功签发</a></div>";
-												$('#appListHeader').append(hint);
-												$('#hintAlert').load("component.php?sign="+$('#appKey').attr('key'));
-												addAgentMemo("signed");
-												$('#appSignedModal').modal('toggle');
-											});
-											//addEditBtnEvent();
-																					
-										});*/
-									}
+								    		}
+								    	});
+								    
+									}	
 			});
 		}
-			//});\
+		*/
+			
 		
 
 			
@@ -580,36 +580,7 @@
 		  $('#agentSelect').html(ops);
 	   });
 		   
-	   //准备具体货物数据 是否需要，留用
-	   $.post("_search.php?table=wareItems",function(data){
-			//console.log(data);
-		   var obj = jQuery.parseJSON(data);
-		   var ops = "<option value=\"0\" >未确定尺寸</option>";
-		   for(var i = 0; i<obj.length; i++){
-				//console.log(obj[i]);
-		   		ops += "<option value=\""+obj[i].wiID+"\" >"+obj[i].width+"cm*"+obj[i].length+"cm*"+obj[i].height+"cm,"+obj[i].weight+"kg"+"</option>";
-		   }
-		   $('#itemSizeSelect').html(ops);
-		   //$('#itemSizeSelect').selectpicker();
-	   });
-		   
-	  
-		//签发按钮的响应
-		//这个响应是针对签发按钮的，需要修改
-		/*
-		function afterGeTNewAppList(){
-			//加载需要从getPage内响应的元素
-			$('.btn-signedApp').click(function(){
-				$('#modalSign').load("component.php?appID="+$(this).attr('id'));
-				//签发按钮
-				$('#signedBtn').click(function(){
-					var hint = "<div class=\"alert alert-success\" id=\"hintAlert\"><a href=\"#\" class=\"alert-link\">成功签发</a></div>";
-					$('#appListHeader').append(hint);
-					$('#hintAlert').load("component.php?sign="+$('#appSignedUl').attr('key'));
-					$('#appSignedModal').modal('toggle');
-				});
-			});
-		}*/
+	   
     </script>
     
 	<?php 

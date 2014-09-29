@@ -3,23 +3,20 @@
 	include_once("functions_manage.php");
 	//得到数据库
 	if(isset($_GET['db']))
-		$db=$_GET['db']; //获取页码 
+		$db=$_GET['db']; 
 	else
 		$db = "warePackages";
 	
 	$tableItemCount = getTableLength($db); //总记录数
 	//得到页码
+	/*
 	if(isset($_GET['page']))
 		$page=$_GET['page']; //获取页码 
 	else
 		$page = 1;
-	
-	//$result = $db->select("article", "page", "cata=1"); 
-	//$total = $db->db_num_rows($result); //总记录数 
-	 
-	$pagesize=10; //每页显示数 
+	$pagesize=50; //每页显示数 
 	$pageCount=ceil($tableItemCount/$pagesize); //总页数
-	
+	*/
 	
 	if(isset($page)){
 	   
@@ -28,8 +25,8 @@
 	   $query .= "LIMIT ".$startPage.",".$pagesize;
 	   //$query .= " ORDER BY UNIX_TIMESTAMP(appBookingDate) DESC";
 	   if ($result = mysqli_query($connection, $query)) {
-	?>
-    <?php
+	
+	
 		//获取货代名称的列表
 		$clientQuery = "SELECT * FROM `wAgents` ";
 		$clientArray = array();
@@ -39,13 +36,13 @@
 		}
 		
 		
-	?>
+	if($db=="warePackages") { 
 	
-	<?php if($db=="warePackages") { ?>
+	?>
 		<table class="table table-condensed table-hover " style="font-size:10px">
 			<thead><th >ID</th><th>货代名称</th><th>进仓编号</th><th>简短备忘</th><th>操作</th></thead>
 			<tbody>
-				<?php
+	<?php
 					while($row = mysqli_fetch_array($result)){
 						
 						//获取相同wpID的进仓编号的列表
@@ -81,17 +78,17 @@
 					}
 				}
 			}
-				?>
+		?>
 				
 			</tbody>
 		</table>
 	<?php 
 		}
-	?>
-	<?php 
+	
+	
 	if($db=="wApplications") { 
-		if(isset($page)){ 
-		   $startPage=($page-1)*$pagesize;
+		//if(isset($page)){ 
+		   //$startPage=($page-1)*$pagesize;
 		   $OPT="";
 		   if(isset($_GET['para'])){
 				if($_GET['para'] == "AppUnSign"){
@@ -111,27 +108,39 @@
 				}
 		   }
 		   if(isset($_GET['key'])){
-			if($_GET['key'] != null ){
-				if($OPT == "")
-					$OPT = " WHERE ";
-				else
-					$OPT .= " AND ";
-					
-				$OPT .= "`appName` like \"%".$_GET['key']."%\"";
-				$OPT .= "or `INStockID` like \"%".$_GET['key']."%\"";
-				$OPT .= "or `wpID` like \"%".$_GET['key']."%\"";
-				$OPT .= "or `appMaitou` like \"%".$_GET['key']."%\"";
-			}
+				if($_GET['key'] != null ){
+					if($OPT == "")
+						$OPT = " WHERE ";
+					else
+						$OPT .= " AND ";
+						
+					$OPT .= "`appName` like \"%".$_GET['key']."%\"";
+					$OPT .= "or `INStockID` like \"%".$_GET['key']."%\"";
+					$OPT .= "or `wpID` like \"%".$_GET['key']."%\"";
+					$OPT .= "or `appMaitou` like \"%".$_GET['key']."%\"";
+				}
 		   }
 		   
 		   if(isset($_GET['from']) && isset($_GET['to'])){
-			if( ($_GET['from'] != null ) && ($_GET['to'] != null ) ){
-				if($OPT == "")
-					$OPT = " WHERE ";
-				else
-					$OPT .= " AND ";
-				$OPT .= " `appBookingDate` BETWEEN \"".$_GET['from']."\" AND \"".$_GET['to']."\"";
-			}
+				if( ($_GET['from'] != null ) && ($_GET['to'] != null ) ){
+					if($OPT == "")
+						$OPT = " WHERE ";
+					else
+						$OPT .= " AND ";
+					$OPT .= " `appBookingDate` BETWEEN \"".$_GET['from']."\" AND \"".$_GET['to']."\"";
+				}
+		   }
+		   
+		   //筛选完成
+		   if(isset($_GET['filterComplete'])){
+		   		if($_GET['filterComplete'] == "true"){
+		   			if($OPT == "")
+		   				$OPT = " WHERE ";
+	   				else {
+	   					$OPT .= " AND "	;
+	   				}
+	   				$OPT .= " `appComplete` = 0 ";
+		   		}
 		   }
 	   
 	   
@@ -140,40 +149,66 @@
 		   $query .= " ORDER BY `appBookingDate` DESC";
 		   //getActual Count first
 		   $rawCount = getTableLengthByQuery($query);
-		   $query .=" LIMIT ".$startPage.",".$pagesize;
+		   //$query .=" LIMIT ".$startPage.",".$pagesize;
 	   
 	   //echo $query;
 	   if ($result = mysqli_query($connection, $query)) {
-	
-		
-	?>
+				?>
 		<table class="table table-condensed table-hover" style="font-size:10px;" count="<?php echo $rawCount; ?>" >
 			<thead>
-				<th>ID</th>
-				<th>货包</th>
-				<th>app名</th>
-				<th>类型</th>
-				<th>数量</th>
-				<th>app时间</th>
-				<th>完成</th>
-				<th>签发</th>
-				<th>操作</th>
-				<th>编码</th>
-				<th>唛头</th>
-				<th>送货人信息</th>
-				<th>特殊要求</th>
-				<th>操作员</th>
-				<th>所属托盘</th>
-				<th>所属货架</th>
-				<th>打印</th>
+				<?php 
+					//var_dump($_GET['filterDetail']);
+					if( isset($_GET['filterDetail']) ){
+						if( $_GET['filterDetail'] == "true" ){
+							echo "
+							<th>app名</th>
+							<th>类型</th>
+							<th>数量</th>
+							<th>app时间</th>
+							<th>操作</th>
+							<th>编码</th>
+							<th>操作员</th>
+							<th>所属托盘</th>
+							";
+						}
+						if( $_GET['filterDetail'] == "false" ) {
+							echo "
+							<th>ID</th>
+							<th>货包</th>
+							<th>app名</th>
+							<th>类型</th>
+							<th>数量</th>
+							<th>app时间</th>
+							<th>完成</th>
+							
+							<th>操作</th>
+							<th>编码</th>
+							<th>唛头</th>
+							<th>送货人信息</th>
+							<th>特殊要求</th>
+							<th>操作员</th>
+							<th>所属托盘</th>
+							<th>所属货架</th>
+							<th>打印</th>";
+						}
+						
+						
+					}
+				?>
+				
 
 			</thead>
 			<tbody>
 				<?php
 					while($row = mysqli_fetch_array($result)){
-						echo "<tr>";
-						echo "<td>".$row['appID']."</td>";
-						echo "<td>".$row['wpID']."</td>";
+						echo "<tr ";
+						if ($row["appSignned"] != 1)
+							echo "style=\"background-color:#EFEFCA\" ";
+						if ($row["appComplete"] == 1)
+							echo "style=\"background-color:#EFEFEF\" ";
+						echo " >";
+						if( $_GET['filterDetail']=="false") echo "<td>".$row['appID']."</td>";
+						if( $_GET['filterDetail']=="false") echo "<td>".$row['wpID']."</td>";
 						echo "<td>".$row['appName']."</td>";
 						if($row['appType'] == "in"){
 							echo "<td><span class=\"glyphicon glyphicon-import\" style=\"color:DarkOliveGreen \"></span></td>";
@@ -192,45 +227,46 @@
 						
 						
 						//库单完成状态
-						if($row['appComplete']==1)
-							echo "<td>".$row['appComplete']."</td>";
-							//echo "<td><span class=\"glyphicon glyphicon-check\" style=\"color:green\"></span></td>";
-						else
-							echo "<td><span class=\"glyphicon glyphicon-unchecked\" style=\"color:grey\"></span></td>";
+						if( $_GET['filterDetail']=="false")
+							if($row['appComplete']==1)
+								echo "<td>".$row['appComplete']."</td>";
+								//echo "<td><span class=\"glyphicon glyphicon-check\" style=\"color:green\"></span></td>";
+							else
+								echo "<td><span class=\"glyphicon glyphicon-unchecked\" style=\"color:grey\"></span></td>";
 						
 						
 						if($row['appSignned'] == 0)
-							echo "<td><a id=\"".$row['appID']."\" data-toggle=\"modal\" data-target=\"#appSignedModal\"  class=\"btn btn-xs btn-success btn-signedApp\">签发</a></td>";
+							echo "<td><a id=\"".$row['appID']."\" data-toggle=\"modal\" data-target=\"#appSignedModal\"  class=\"btn btn-xs btn-success btn-signedApp\">签发</a>";
 						else
-							echo "<td><span class=\"glyphicon glyphicon-check\" style=\"color:green\"></span></td>";
+							echo "<td><span style=\"width:42px\" class=\"glyphicon glyphicon-check\" style=\"color:green\"></span>";
 						
 						//修改按钮glyphicon-edit
-						echo "<td><a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelBtn btn btn-primary btn-xs\" > <span class=\"glyphicon glyphicon-edit\" style=\"color:white\"></span></a>";
+						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelBtn btn btn-primary btn-xs\" > <span class=\"glyphicon glyphicon-edit\" style=\"color:white\"></span></a>";
 						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelDetail btn btn-warning btn-xs\" > <span class=\"glyphicon glyphicon-zoom-in\" style=\"color:white\"></span></a>";
 						echo "</td>";
 
 						//编码
 						echo "<td>".$row['InStockID']."</td>";
 						//唛头
-						echo "<td>".$row['appMaitou']."</td>";
+						if( $_GET['filterDetail']=="false")echo "<td>".$row['appMaitou']."</td>";
 						//送货人信息
-						echo "<td>".$row['deliverComp']."/".$row['deliverTruckID']."/".$row['deliverDriver']."/".$row['deliverMobile']."</td>";
+						if( $_GET['filterDetail']=="false")echo "<td>".$row['deliverComp']."/".$row['deliverTruckID']."/".$row['deliverDriver']."/".$row['deliverMobile']."</td>";
 						//特殊要求
-						echo "<td>".$row['extraInfo']."</td>";
+						if( $_GET['filterDetail']=="false")echo "<td>".$row['extraInfo']."</td>";
 						//特殊要求
 						echo "<td>".$row['appOperator']."</td>";
 						//货盘
-						echo "<td>点击获取</td>";
+						echo "<td><a key=\"".$row['appID']."\" class=\"getTrays btn btn-primary btn-xs\">点击获取</a></td>";
 						//货架
-						echo "<td>点击获取</td>";
+						if( $_GET['filterDetail']=="false")echo "<td>点击获取</td>";
 						//打印
-						echo "<td>点击打印</td>";
+						if( $_GET['filterDetail']=="false")echo "<td>点击打印</td>";
 
 
 						echo "</tr>";
 					}
 				}
-			}
+			//}
 			?>
 				
 			</tbody>
@@ -330,6 +366,13 @@
 					//console.log( "appDetail.php?appID="+ $(this).attr('id') );
 					$('#appDetailBox').load("appDetail.php?appID="+$(this).attr('id'));
 					jumpPage("#appDetailBox","#navViewAppBtn");
+				});
+				
+				$('.getTrays').on("click",function() {
+					console.log( $(this).attr("key"));
+					$(".navBlock").hide();
+					$($('#trayBox')).show();
+					$("#trayBox").load("trays.php?trayKey="+$(this).attr("key"));
 				});
 			}
 	</script>

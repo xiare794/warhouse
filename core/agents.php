@@ -1,7 +1,8 @@
+
 <?php require_once("config.php"); //session
 ?>
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="zh-cn"><!-- 2014.09.28 -->
 	<head>
 		<?php
   	 	//如果没有用户信息，就跳转回登陆页面
@@ -75,7 +76,7 @@
 	</head>
 	<body >
 		<!-- agent container -->
-			<div id="agentBody" class="row" >
+			<div id="agentBody"  >
 				<div class="bs-callout bs-callout-warning col-lg-6" id="agentOperateInfo" style="position:fixed; opacity:0.9; z-index:99">
 					<h4>测试警告</h4>
 					<p>这里提供一些刷新的信息，2秒后消失</p>
@@ -130,15 +131,15 @@
 							</div>
 
 							<div class="navbar-form navbar-left" role="search">
-				        <div class="form-group">
-				          <input type="search" id="agentSearchInput" class="form-control" placeholder="筛选代理商">
-				        </div>
-				        
-				      </div>
-				      <div class="navbar-form navbar-right">
-				      	<button id="agentOpHint" class="btn btn-default btn-sm form-control">操作提示</button>
-				      	<button  class="btn btn-default btn-sm form-control" id="createAgentBtn">新增货代</button>
-				      </div>
+						        <div class="form-group">
+						          <input type="search" id="agentSearchInput" class="form-control" placeholder="筛选代理商">
+						        </div>
+						        
+						     </div>
+						     <div class="navbar-form navbar-right">
+						      	<button id="agentOpHint" class="btn btn-default btn-sm form-control">操作提示</button>
+						      	<button  class="btn btn-default btn-sm form-control" id="createAgentBtn">新增货代</button>
+						     </div>
 							<!--<div class="col-lg-2 col-md-2 col-sm-2"><h5>代理商操作</h5></div>
 							<a role="menuitem" tabindex="-1" href="#">测试功能</a>
 							<div class="col-lg-6"><label for="exampleInputEmail1">查找</label> <input type="search" id="agentSearchInput"></input> </div>
@@ -275,10 +276,6 @@
 				hint += "<li>点击某个进仓编号，查看进仓编号下的货物情况</li>";
 				outputHint(title,hint,5000);
 			});
-			//<? php echo "console.log('".$_SESSION['user']."');"; ?>
-
-			
-			//console.log(userName);
 			//新建按钮
 			$('#newAgentBtn').on("click",function(data){
 				$.post( "_insert.php?table=wAgents", $( "#editAgentForm" ).serialize())
