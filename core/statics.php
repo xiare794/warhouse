@@ -364,11 +364,12 @@
 
 		  $.post("_search.php?table=wApplications",function(data){
 				 var obj = jQuery.parseJSON(data);
+				 //console.log("在这里");
 				 //console.log(obj); 
 				 
 				 $.each(obj,function(i,item){
-				 		//console.log(item.appBookingDate);
-					 //console.log(item.appType);
+				     //console.log(item.appBookingDate);
+					// console.log(item.appType);
 					if(item.appType == "in"){
 						inPlot.push([item.appBookingDate,Number(item.appCount)]);
 					}
@@ -376,24 +377,26 @@
 						outPlot.push([item.appBookingDate,Number(item.appCount)]);
 					}
 				 });
+				 //console.log(inPlot);
+				 //console.log(outPlot);
 				var plot2 = $.jqplot('inOutStatics', [inPlot,outPlot], {
 				  title: '所有计划中的出入库', 
 				  axes:{
-		        xaxis:{
-		          renderer:$.jqplot.DateAxisRenderer, 
-		          tickOptions:{formatString:'%b&nbsp;%#d'},
-		          min:'Jan , 2014', 
-		          tickInterval:'12 months'
-		        }
-		      },
+			          xaxis:{
+				          renderer:$.jqplot.DateAxisRenderer, 
+				          tickOptions:{formatString:'%b&nbsp;%#d'},
+				          min:'2014-01-01', 
+				          tickInterval:'12 months'
+				        }
+			      },
 					
-					highlighter: {
-		        show: true,
-		        sizeAdjust: 7.5
-		      },
-		      cursor: {
-		        show: false
-		      }
+				  highlighter: {
+		            show: true,
+		            sizeAdjust: 7.5
+		          },
+			      cursor: {
+			        show: false
+			      }
 		  	});	
 
 
@@ -405,7 +408,7 @@
 
 
 	$().ready(function(){
-		var staffWorkRange = "1 DAY";	
+		var staffWorkRange = "1 YEAR";	
 		staffWorkInGraph(staffWorkRange);
 		$("#stuffFilter").on("change",function(){
 			console.log($(this).val());

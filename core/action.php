@@ -125,24 +125,23 @@
 		//package.appid = p
 		var userName = "<?php echo $_SESSION['user'];?>";
 		var userID = "<?php echo $_SESSION['userID'];?>";
-		var actionType = {"signedApp":"签署库单",
-											"editAgent":"修改货代",
-											"newAgent":"新建货代",
-											"editApp":"修改库单",
-											"newApp":"新建入库单",
-											"newOutApp":"新建出库单",
-											"trayUnload":"下货架",
-											"trayLoad":"上货架",
-											"unbindTray":"解除托盘",
-											"bindTray":"绑定托盘",
-											"loadStock":"装载货物",
-											"unloadStock":"取出货物",
-											"finAppIn":"完成入任务",
-											"finAppOut":"完成出任务",
-											"traysIn":"入门操作",
-											"traysOut":"出门操作"
-
-										};
+		var actionType = {	"signedApp":"签署库单",
+							"editAgent":"修改货代",
+							"newAgent":"新建货代",
+							"editApp":"修改库单",
+							"newApp":"新建入库单",
+							"newOutApp":"新建出库单",
+							"trayUnload":"下货架",
+							"trayLoad":"上货架",
+							"unbindTray":"解除托盘",
+							"bindTray":"绑定托盘",
+							"loadStock":"装载货物",
+							"unloadStock":"取出货物",
+							"finAppIn":"完成入任务",
+							"finAppOut":"完成出任务",
+							"traysIn":"入门操作",
+							"traysOut":"出门操作"
+						};
 		console.log("测试type");
 		console.log( actionType["traysIn"]);
 		console.log(actionType);

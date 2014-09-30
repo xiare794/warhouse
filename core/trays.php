@@ -14,8 +14,16 @@
 	<body >-->
 		<!-- agent container -->
 			<div id="traysBody" class="row" key="<?php if( isset($_GET['trayKey'])) echo $_GET['trayKey'];?>">
-				<div class="panel panel-default scrolls-both" id="traysContainer">
-					
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="panel panel-default scrolls-both" id="traysContainer">
+						
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="panel panel-default scrolls-both" id="item_A_acts">
+						货品和动作记录
+						
+					</div>
 				</div>
 			</div>
 
@@ -53,9 +61,57 @@
 				var str = $('#traySearchInput').val();
 				$(".trayRow").each(function(){
 					$(this).hide();
+					var found = false;
 					if($(this).html().match(str)){
 						$(this).show();
+						found = true;
 					}
+					if(!found) //如果没有匹配托盘，有可能此记录已出库,记录侧改为查找所有表单对应的入库编码
+					{
+						var query  = "SELECT * ";
+						query 		+= "FROM wActions act, wApplications app ";
+						query 		+= "WHERE ( act.InStockID= app.InstockID AND app.appID = "+str +")";
+						$.post("_search.php?query="+query,function(data){
+								var obj = jQuery.parseJSON(data);
+								//console.log(obj);
+								var text = "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
+								text 	+= "<thead>"+"<th>入库编码</th>"+"<th>类型</th>"+"<th>时间</th>"+"<th>内容</th>"+"</thead>";
+								text 	+= "<tbody>";
+								
+								for(var i = 0; i<obj.length; i++){
+									text += "<tr><td>"+obj[i].InStockID+"</td><td>"+obj[i].actType+"</td><td>"+obj[i].actTime+"</td><td>"+obj[i].actContent+"</td></tr>";
+								}
+								text 	+= "</tbody>";
+							  $('#item_A_acts').html(text);
+						});
+					}
+				});
+				
+				//点击托盘，查询历史托盘动作项
+				$('#traysContainer tr').on("click",function () {
+					var trayID =  $(this).find("td")[0].innerText;
+					var appID = $(this).find("td")[1].innerText;
+					
+					var query  = "SELECT * ";
+					query 		+= "FROM wActions act ";
+					query 		+= "WHERE ( act.trayID="+trayID+" OR act.trayID=0 OR act.trayID=null) AND act.appID="+appID+" ";
+					
+					console.log(query);
+					$.post("_search.php?query="+query,function(data){
+							var obj = jQuery.parseJSON(data);
+							console.log(obj);
+							var text = "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
+							text 	+= "<thead>"+"<th>入库编码</th>"+"<th>类型</th>"+"<th>时间</th>"+"<th>内容</th>"+"</thead>";
+							text 	+= "<tbody>";
+							
+							for(var i = 0; i<obj.length; i++){
+								text += "<tr><td>"+obj[i].InStockID+"</td><td>"+obj[i].actType+"</td><td>"+obj[i].actTime+"</td><td>"+obj[i].actContent+"</td></tr>";
+							}
+							text 	+= "</tbody>";
+						  $('#item_A_acts').html(text);
+					});
+					
+					//$('#item_A_acts').html()
 				});
 	    }
 	  });
@@ -99,7 +155,7 @@
 			*/
 			output 	+= "<div class=\"panel-body\">";
 
-			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"";
+			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
 			output 	+= "<thead>";
 			for(var i in head){
 				output += "<th>"+head[i]+"</th>";
@@ -109,7 +165,7 @@
 
 			var previousAg = "";
 			for(var i in obj){
-				output += "<tr class=\"trayRow\">";
+				output += "<tr class=\"trayRow\" >";
 				for(var j in attr){
 					//加跳转
 					if(link == attr[j]){
@@ -146,6 +202,10 @@
 
 			$('#agentOperateInfo').html(output).show();
 			setTimeout("$('#agentOperateInfo').hide()",2000);
+		}
+		
+		function chooseOnTray(target) {
+			console.log(target);
 		}
 
 
