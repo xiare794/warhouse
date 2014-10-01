@@ -5,6 +5,7 @@
 <html>
 <head>
     <?php
+    	//2014.09版本 ref
         //include("_db.php"); 
         //include("functions_manage.php");
         //如果没有用户信息，就跳转回登陆页面

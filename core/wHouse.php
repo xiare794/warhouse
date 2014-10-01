@@ -28,10 +28,13 @@
   <script>
   	//s计算天数
   	function calculateDays(date){
-  		var diff = (new Date()).getTime() - (new Date(date)).getTime();
+  		var day = date.split(" ")[0].split("-");
+  		var time = date.split(" ")[1].split(":");
+  		//date = date.replace(/-/g, " ");
+  		var dd = new Date(day[0],day[1],day[2],time[0],time[1],time[2]);
+  		
+  		var diff = new Date().getTime() - dd.getTime();
   		var diffDays = Math.floor(diff/1000/60/60/24);
-
-  		//console.log(diffDays+"天");
   		return(diffDays);
   	}
 	  //托盘有什么需求呢
@@ -64,14 +67,15 @@
 				var obj = jQuery.parseJSON(data);
 				console.log(obj);
 				for(var i in obj){
+					//console.log("计算天"+calculateDays(obj[i]["updateTime"]));
 					var item = $("#houseContainer td[row="+obj[i]["tsPosRow"]+"][floor="+obj[i]["tsPosFloor"]+"][col="+obj[i]["tsPosCol"]+"][house="+obj[i]["tsWareHouse"]+"]");
 					var string = "仓库位置"+ obj[i]["wSlotID"]+"<br/>"; 
 					string += obj[i]["wiName"]+obj[i]["count"]+"箱 <br/>";
 					string += "更新时间"+obj[i]["updateTime"];
 					string += "已存放"+calculateDays(obj[i]["updateTime"])+"天";
-					calculateDays(obj[i]["updateTime"]);
 					item.append("<span class=\"glyphicon glyphicon-list\" style=\"color:DarkSeaGreen\" data-toggle=\"tooltip\"  data-original-title=\""+string+"\" ></span> ");
 					//<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">上方Tooltip</button>
+					console.log(calculateDays(obj[i]["updateTime"]));
 				}
 	    }
 	  });

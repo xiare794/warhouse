@@ -1,6 +1,6 @@
 <?php 
 	//填充在每次使用DB之前
-	$host = "localhost";
+	$host = "192.168.1.10";
 	$databaseName = "stockDB";
 	$user = "xiare794";
 	$pass = "123";

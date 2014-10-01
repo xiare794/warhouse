@@ -1,6 +1,6 @@
 <?php 
   session_start(); //session
-  
+  //2014.09版本 ref
   if(isset($_GET['logout'])){
     
     if($_GET['logout'] == true){

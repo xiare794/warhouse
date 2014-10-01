@@ -90,14 +90,19 @@
 				//点击托盘，查询历史托盘动作项
 				$('#traysContainer tr').on("click",function () {
 					var trayID =  $(this).find("td")[0].innerText;
-					var appID = $(this).find("td")[1].innerText;
+					var appIDIn = $(this).find("td")[1].innerText.split("/")[0];
+					var appIDOut = $(this).find("td")[1].innerText.split("/")[1];
 					
+					if(appIDOut.length == 0) appIDOut = null;
+					//包含的可能性
 					var query  = "SELECT * ";
 					query 		+= "FROM wActions act ";
-					query 		+= "WHERE ( act.trayID="+trayID+" OR act.trayID=0 OR act.trayID=null) AND act.appID="+appID+" ";
+					query 		+= "WHERE ( act.trayID="+trayID+" OR act.trayID=0 OR act.trayID=null) AND (act.appID="+appIDIn+" OR "+ "act.appID="+appIDOut+" ) ";
 					
 					console.log(query);
 					$.post("_search.php?query="+query,function(data){
+							console.log(data);
+					
 							var obj = jQuery.parseJSON(data);
 							console.log(obj);
 							var text = "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
@@ -153,8 +158,7 @@
 			output  += "<div class=\"form-group\"><input type=\"search\" id=\"traysSearchInput\" class=\"form-control\" placeholder=\"筛选托盘\"> </div>"; 
 			output  += "</div>";
 			*/
-			output 	+= "<div class=\"panel-body\">";
-
+			output 	+= "<div class=\"panel-body\">"; 
 			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
 			output 	+= "<thead>";
 			for(var i in head){
@@ -172,10 +176,9 @@
 						//console.log("相同");
 						output += "<td><a  class=\"agentLoad btn btn-default btn-xs\" data=\""+obj[i][attr[j]]+"\">"+obj[i][attr[j]]+"</a></td>";
 					}
-					//省略货代名称和联系
-					else if("waName" == attr[j] && obj[i][attr[j]]==previousAg){
-						//console.log("get hree 达到");
-						output += "<td style=\"visibility:hidden\">"+obj[i][attr[j]]+"</td>";
+					else if( "wtAppID" == attr[j]){
+						output += "<td>"+obj[i][attr[j]]+"/"+obj[i]['wtAppOutID']+"</td>"
+					
 					}
 					//对货代名称增加link
 					else if ("waName" == attr[j]){
@@ -184,14 +187,14 @@
 					else{
 						output += "<td>"+obj[i][attr[j]]+"</td>";
 					}
-
+			
 				}
 				output += "</tr>";
 				previousAg = obj[i]['waName'];
 				//console.log(previousAg);
-			}
-			output 	 += "</tbody>";
-			output 	 += "</table>";
+			  }
+			  output 	 += "</tbody>";
+			  output 	 += "</table>"; 
 			output 	 += "</div>";
 			return output;
 		}

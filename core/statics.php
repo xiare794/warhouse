@@ -313,7 +313,7 @@
 		$.post("_search.php?table=wTrays",function(data){
 			var obj = jQuery.parseJSON(data);
 			var traysUse = function(){
-			var list = [[['空闲',0],['货架',0],['使用中',0]]];
+			var list = [[['空闲',0],['货架',0],['仓库外',0],['仓库内',0]]];
 				//console.log(list);
 				
 			$.each(obj,function(i,item){
@@ -324,9 +324,13 @@
 				{
 					list[0][1][1] = parseInt(list[0][1][1])+1;
 				}
-				else if(item.twStatus == "使用中")
+				else if(item.twStatus == "仓库外")
 				{
 					list[0][2][1] = parseInt(list[0][2][1])+1;
+				}
+				else if(item.twStatus == "仓库内")
+				{
+					list[0][3][1] = parseInt(list[0][3][1])+1;
 				}
 				
 			});
