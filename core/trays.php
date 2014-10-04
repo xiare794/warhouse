@@ -54,7 +54,7 @@
 				var attr = new Array("wtID","wtAppID","wSlotID","twWareCount","twWareItemID","UpdateTime");
 				var obj = jQuery.parseJSON(data);
 				var link = "wSlotID";
-				console.log(obj);
+				//console.log(obj);
 				$('#traysContainer').html( FormPanelTable(obj,attr,head,link,"托盘列表"));
 				
 				//预支筛选
@@ -101,7 +101,7 @@
 					
 					console.log(query);
 					$.post("_search.php?query="+query,function(data){
-							console.log(data);
+							//console.log(data);
 					
 							var obj = jQuery.parseJSON(data);
 							console.log(obj);
@@ -174,7 +174,7 @@
 					//加跳转
 					if(link == attr[j]){
 						//console.log("相同");
-						output += "<td><a  class=\"agentLoad btn btn-default btn-xs\" data=\""+obj[i][attr[j]]+"\">"+obj[i][attr[j]]+"</a></td>";
+						output += "<td>"+obj[i]["twStatus"]+"  <a  class=\"agentLoad btn btn-default btn-xs\" data=\""+obj[i][attr[j]]+"\">"+obj[i][attr[j]]+"</a></td>";
 					}
 					else if( "wtAppID" == attr[j]){
 						output += "<td>"+obj[i][attr[j]]+"/"+obj[i]['wtAppOutID']+"</td>"

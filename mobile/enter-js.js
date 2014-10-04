@@ -670,6 +670,7 @@ $().ready(function() {
 
 		//解除托盘绑定
 		$('#releaseTray').unbind("click").on('click',function(){
+			//先将托盘运出仓库才能卸下货物
 			//针对wTrays的操作，先查询wtID下的Uint，托盘为空后
 			if($("#releaseTray").attr("trayEmpty") == "true"){
 				$('#bindTray2AppBtnHint').html("托盘为空，可以继续");
@@ -712,26 +713,38 @@ $().ready(function() {
 		//全部卸下动作 修改unit的库单、托盘号、数量、时间
   	$('#removeUnit').unbind("click").on("click",function(data){
   		console.log("卸下一次货物，全部"+$('#unitUnloadSelect').val());
+  		//先将托盘运出仓库才能卸下货物
+  		if( _app.currentTray.twStatus == "仓库外") 
+  		{
 			$.get("phpSearch.php?table=wareUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
 				console.log(result);
 				var unit = jQuery.parseJSON(result);
+				console.log(unit);
+				
+				
+				$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
+					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
+					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
+					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
+					//$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=wiCloseNote&&tValue=appID"+_app.currentApp.appID+"count"+_app.currentApp.appID");
+				showUnitList();
+				updateTrayPageFunction();
+				var memo ={actUserID:userID,actType:"unloadStock",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"卸下了"+_app.currentTray.wtID+"托盘的货物,"+unit[0].wiName+"货物"+unit[0].count+"箱"};
+				console.log(memo);
+					addMemo(memo);
 				$('#TrayDialogFormHint4Remove').html(unit[0].wiName+"货物"+unit[0].count+"件全部取出");
 			});
-			$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
-			$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
-			$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
-			$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
-			//$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=wiCloseNote&&tValue=appID"+_app.currentApp.appID+"count"+_app.currentApp.appID");
-  		showUnitList();
-  		updateTrayPageFunction();
-  		var memo ={actUserID:userID,actType:"unloadStock",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"卸下了"+_app.currentTray.wtID+"托盘的货物,"+unit[0].wiName+"货物"+unit[0].count+"箱"};
-			addMemo(memo);
+		}
+		else {
+			$('#TrayDialogFormHint4Remove').html("先将托盘运出仓库才能卸下货物");
+		}
+			
   	});
 		//部分卸下动作，提取数量，
   	$('#removePartUnit').unbind("click").on("click",function(data){
   		console.log("卸下一次货物，部分");
-
-  		$.get("phpSearch.php?table=wareUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
+		if( _app.currentTray.twStatus == "仓库外"){
+  			$.get("phpSearch.php?table=wareUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
 				console.log(result);
 
 				var unit = jQuery.parseJSON(result);
@@ -759,6 +772,9 @@ $().ready(function() {
 					$('#TrayDialogFormHint4Remove').html("取出失败货物不够");
 				}
 			});
+		}else {
+			$('#TrayDialogFormHint4Remove').html("先将托盘运出仓库才能卸下货物");
+		}
   	});
 		
 		//给几个select增加blur动作
