@@ -5,6 +5,7 @@
 <html lang="cn">
   <head>
   	<?php
+  		//测试从笔记本上传同步2014/10/10
   		include("_db.php"); 
   	 	include("functions_manage.php");
   	 	//如果没有用户信息，就跳转回登陆页面
