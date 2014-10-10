@@ -104,11 +104,13 @@
 			echo "成功添加".$data[0].$data[1]."到".$table;
 		}
 	}
-	//更新一个item
+	//更新一个item 
 	function update($table, $para,$data){
 		//更新参数/值中的第一个是查找key
+		//如果成功，返回1
+		//失败返回0
 		global $connection;
-		$return  = "";
+		//$return  = "";
 		$query = "UPDATE `".$table."` SET ";
 		for($i = 1; $i<count($para); $i++){
 			if($i != 1)
@@ -119,9 +121,12 @@
 		
 		$result = mysqli_query($connection,$query);
 		if(!$result){
-		 echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
-		 $return .='[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		 return '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		 //echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		 //$return .='[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
 		}else{
+			return 1;
+			/*
 			echo "成功修改:[";
 			$return .= "成功修改:[";
 			for($i=0; $i<count($para); $i++){
@@ -129,9 +134,9 @@
 				$return .= $para[$i].":".$data[$i]."|";
 			}
 			echo "]";
-			$return .="]";
+			$return .="]";*/
 		}
-		return $return;
+		//return $return;
 	}
 	//删除一个item
 	function delete($table, $para,$data){
@@ -141,9 +146,9 @@
 		
 		$result = mysqli_query($connection,$query);
 		if(!$result){
-		 echo '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
+		 return '[we have a problem]: '.mysqli_error($connection)."<br>query [".$query."]";
 		}else{
-			echo "成功删除".$table."中的元素";
+			return 1;// "成功删除".$table."中的元素";
 		}
 	}
 	

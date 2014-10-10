@@ -26,50 +26,7 @@
 		<style >
 		.form-control{
 			padding: 0px 10px;
-		}
-		/*
-		 * Callouts
-		 *
-		 * Not quite alerts, but custom and helpful notes for folks reading the docs.
-		 * Requires a base and modifier class.
-		 */
-
-		/* Common styles for all types */
-		.bs-callout {
-		  margin: 20px 0;
-		  padding: 20px;
-		  border-left: 3px solid #eee;
-		}
-		.bs-callout h4 {
-		  margin-top: 0;
-		  margin-bottom: 5px;
-		}
-		.bs-callout p:last-child {
-		  margin-bottom: 0;
-		}
-
-		/* Variations */
-		.bs-callout-danger {
-		  background-color: #fdf7f7;
-		  border-color: #eed3d7;
-		}
-		.bs-callout-danger h4 {
-		  color: #b94a48;
-		}
-		.bs-callout-warning {
-		  background-color: #faf8f0;
-		  border-color: #faebcc;
-		}
-		.bs-callout-warning h4 {
-		  color: #8a6d3b;
-		}
-		.bs-callout-info {
-		  background-color: #f4f8fa;
-		  border-color: #bce8f1;
-		}
-		.bs-callout-info h4 {
-		  color: #34789a;
-		}
+		}		
 		</style>
 		
 		<!-- <link href="dist/css/bootstrap.css" rel="stylesheet"> -->
@@ -77,12 +34,8 @@
 	<body >
 		<!-- agent container -->
 			<div id="agentBody"  >
-				<div class="bs-callout bs-callout-warning col-lg-6" id="agentOperateInfo" style="position:fixed; opacity:0.9; z-index:99">
-					<h4>测试警告</h4>
-					<p>这里提供一些刷新的信息，2秒后消失</p>
-					<?php var_dump($_SESSION); ?>
-				</div>
-
+				
+				
 				<blockquote  id="editAgent" style="display:none; border:1px #F1F1F1 solid; margin-top:0px margin-bottom:0px; background-color:#F2FFFF">
 					<form role="form" class="row" id="editAgentForm">
 						<div class="col-lg-12"> <h4>货代表格 <a class="btn btn-warning btn-sm pull-right" id="cancelBtn" style="margin-right:15px" >放弃操作</a><hr></h4> </div>
@@ -129,7 +82,6 @@
 							<div class="navbar-header">
 								<a class="navbar-brand" href="#">代理商操作</a>
 							</div>
-
 							<div class="navbar-form navbar-left" role="search">
 						        <div class="form-group">
 						          <input type="search" id="agentSearchInput" class="form-control" placeholder="筛选代理商">
@@ -140,10 +92,7 @@
 						      	<button id="agentOpHint" class="btn btn-default btn-sm form-control">操作提示</button>
 						      	<button  class="btn btn-default btn-sm form-control" id="createAgentBtn">新增货代</button>
 						     </div>
-							<!--<div class="col-lg-2 col-md-2 col-sm-2"><h5>代理商操作</h5></div>
-							<a role="menuitem" tabindex="-1" href="#">测试功能</a>
-							<div class="col-lg-6"><label for="exampleInputEmail1">查找</label> <input type="search" id="agentSearchInput"></input> </div>
-							<div class="col-lg-3"><a class="btn btn-default" id="createAgentBtn">新增货代</a></div>-->
+							
 						</div>
 					</div>
 
@@ -171,14 +120,13 @@
 		//操作 新建修改删除
 
 		//代理商目录需要看到的是每个代理商 一共有哪些货物在仓库或者在运
-		//agent.id = package.agentid
-		//package.appid = p
+
 		var userName = "<?php echo $_SESSION['user'];?>";
 		var userID = "<?php echo $_SESSION['userID'];?>";
 		
 
 		console.log(userName);
-		outputHint("测试","这是一个输出和定时器<br>用户"+userName+"<br>代码"+userID,3000);
+		//addRemind("测试","这是一个输出和定时器<br>用户"+userName+"  代码"+userID,3000);
 		//显示列表
 		var query  = "(SELECT * ";
 		query 		+= "FROM wAgents a, warePackages p, wApplications app ";
@@ -274,7 +222,7 @@
 				hint += "<li>点击某个货代名称，修改信息再点击更新保存修改的信息</li>";
 				hint += "<li>点击某个货代名称，进行删除操作</li>";
 				hint += "<li>点击某个进仓编号，查看进仓编号下的货物情况</li>";
-				outputHint(title,hint,5000);
+				addRemind(title,hint,5000);
 			});
 			//新建按钮
 			$('#newAgentBtn').on("click",function(data){
@@ -283,29 +231,32 @@
 							console.log(data);
 							if(data[0]=="1"){
 								$('#DialogRfidHint').html("绑定成功");
-								outputHint("新增货代","新增货代"+$('#waName')+"成功",3000);
+								addRemind("新增货代成功","新增货代"+$('#waName')+"成功",3000);
 								addAgentMemo("new");
 							}
 							else{
 								$('#DialogRfidHint').html(data);
-								outputHint("新增货代","新增货代"+$('#waName')+"失败",3000);
+								addRemind("新增货代失败","新增货代"+$('#waName')+"失败",3000,"bs-callout-danger");
 							}
 					});
 			});
 			//增加备忘
 			function addAgentMemo(type){
-				var memoType = "新增";
 				var memo = "";
+				var typeHint = "";
 				if(type == "new"){
+					typeHint = "新增货代";
 					memo ="新增货代:";
 				}
 				else if(type == "edit"){
+					typeHint = "修改货代";
 					memo ="修改货代:";
 				}
 				else if(type == "delete"){
+					typeHint = "删除货代";
 					memo ="删除货代:"
 				}
-
+				
 				//var memo = "修改货代：";
 				$(".has-warning").each(function(data){
 					var input = $(this).find("input");
@@ -314,11 +265,17 @@
 				console.log(memo);
 				//需要userID，actType actTime,#inStockID,#trayID,#trayID,#slotID,actContent
 				var query = "?actUserID="+userID+"&&actType="+type+"Agent"+"&&actTime=--&&actContent="+memo;
-				console.log("_insertAct.php"+query);
+				//console.log("_insertAct.php"+query);
 				
 				$.post( "_insertAct.php"+query,function(data){
 					//console.log(data);
-					outputHint("修改货代结果",data,3000);
+					if(data == 1){
+						addRemind(typeHint+"成功",memo,4000,"bs-callout-info");
+						$('#editAgent').hide();
+					}
+					else {
+						addRemind(typeHint+"失败",data,4000,"bs-callout-danger");
+					}
 				});
 			}
 			//修改信息
@@ -350,7 +307,7 @@
 			});
 			$('#deleteAgentBtn').on("click",function(data){
 				console.log("暂时不提供此功能");
-				outputHint("暂时不提供删除功能",3000);
+				addRemind("删除货代","暂时不提供删除功能",3000,"bs-callout-danger");
 			});
 			//这里需要根据编码返回1，所有编码下的入库出库匹配的货物名称，数量。
 			//2，未完成的出库的详细连tray的信息
@@ -410,7 +367,7 @@
 			var output = "<div class=\"panel-heading\" \>"+title+"</div>";
 			output 	+= "<div class=\"panel-body\">";
 
-			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"";
+			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:85%;\"";
 			output 	+= "<thead>";
 			for(var i in head){
 				output += "<th>"+head[i]+"</th>";
@@ -454,21 +411,8 @@
 			output 	 += "</div>";
 			return output;
 		}
-		/*
-		function outputHint(title,content){
-			var output = "<h4>"+title+"</h4>";
-			output += "<p>"+content+"</p>";
 
-			$('#agentOperateInfo').html(output).show();
-			setTimeout("$('#agentOperateInfo').hide()",2000);
-		}*/
-		function outputHint(title,content,time){
-			var output = "<h4>"+title+"</h4>";
-			output += "<p>"+content+"</p>";
-
-			$('#agentOperateInfo').html(output).show();
-			setTimeout("$('#agentOperateInfo').hide()",time);
-		}
+		
 
 
 		

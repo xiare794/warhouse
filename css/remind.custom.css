@@ -1,0 +1,52 @@
+/* Common styles for all types */
+.bs-callout {
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #eee;
+  display: none;
+}
+.bs-callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+.bs-callout p{
+	font-size: 14px;
+}
+.bs-callout p:last-child {
+  margin-bottom: 0;
+}
+
+/* Variations */
+/* 严重提示 */
+.bs-callout-danger {
+  background-color: #fdf7f7;
+  border-color: #eed3d7;
+}
+.bs-callout-danger h4 {
+  color: #b94a48;
+}
+/* 告警提示 */
+.bs-callout-warning {
+  background-color: #faf8f0;
+  border-color: #faebcc;
+}
+.bs-callout-warning h4 {
+  color: #34789a;
+}
+/* 信息提示 */
+.bs-callout-info {
+  background-color: #f4f8fa;
+  border-color: #bce8f1;
+}
+.bs-callout-info h4 {
+  color: #34789a;
+}
+.remindBox {
+	position: fixed;
+	opacity: 0.9;
+	z-index: 1100;
+	right: 30px;
+	top:  10px;
+	
+}

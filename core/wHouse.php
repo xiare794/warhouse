@@ -12,8 +12,8 @@
 	</head>
 	<body class="container">
 		<!-- agent container -->
-			<div id="houseBody" class="row" >
-				<div class="panel panel-default col-lg-12 " id="houseContainer">仓库
+			<div id="houseBody" >
+				<div class="panel panel-default col-lg-12 col-md-12 " id="houseContainer">仓库
 				</div>
 			</div>
 
@@ -39,7 +39,10 @@
   	}
 	  //托盘有什么需求呢
 	  //这里需要显示托盘的整体情况，具体托盘
-	  var query =" SELECT * FROM wSlots ";
+	  var mxRow = 0;
+	  var mxCol = 0;
+	  var mxFloor = 0;
+	  var query =" SELECT *,max(tsPosRow),max(tsPosCol),max(tsPosFloor) FROM wSlots ";
 		$.ajax({ 
 	    type : "post", 
 	    url : "_search.php?query="+query,
@@ -49,13 +52,52 @@
 				//var head = new Array("编码","表单","仓库位置","数量","规格","操作时间");
 				var attr = new Array("wSlotID","tsWareHouse","tsPosRow","tsPosCol","tsPosFloor","wtID");
 				var obj = jQuery.parseJSON(data);
-				//var link = "wSlotID";
 				console.log(obj);
+				
+				
+				//var link = "wSlotID";
+				
+				mxRow = Number(obj[0]["max(tsPosRow)"]);
+				mxCol = Number(obj[0]["max(tsPosCol)"]);
+				mxFloor = Number(obj[0]["max(tsPosFloor)"]);
+				
+				var wareVox = [];
+				for(var item in obj){
+				//	wareVox [item['tsPosRow']][item['tsPosCol']][item['tsPosFloor']];
+				}
+				console.log(wareVox);
+				
 				$('#houseContainer').html( FormPanelTable(obj,attr,"","","仓库列表"));
+				
 	    }
 	  });
-
-		//查找所有仓位和托盘对的上好的位置
+	  //查找所有仓位修改其颜色
+	  var query  ="SELECT * FROM wSlots s ";
+	  $.ajax({ 
+	    type : "post", 
+	    url : "_search.php?query="+query,
+	    async : false, 
+	    success : function(data){
+	    	var obj = jQuery.parseJSON(data);
+	    	
+	    	for(var i in obj){
+	    		var item = $("#houseContainer td[row="+obj[i]["tsPosRow"]+"][floor="+obj[i]["tsPosFloor"]+"][col="+obj[i]["tsPosCol"]+"][house="+obj[i]["tsWareHouse"]+"]");
+	    		item.css("background-color","#EEE");
+	    		item.css("border-left","1px solid #333");
+	    		item.css("border-right","1px solid #333");
+	    		item.css("border-top","2px solid #333");
+	    		item.css("border-bottom","2px solid #333");
+	    		item.css("width","50px");
+	    		item.css("height","35px");
+	    		
+	    		
+	    		//item.html(obj[i]["tsPosRow"]+"-"+obj[i]["tsPosCol"]+"-"+obj[i]["tsPosFloor"]);
+	    		console.log(item);
+	    	}
+	    }
+	  });
+		
+	  //查找所有仓位和托盘对的上好的位置
 	  var query  ="SELECT * FROM wSlots s, wTrays t, wareUnit u ";
 	  query 		+="WHERE s.wtID = t.wtID AND u.trayID=t.wtID ";
 	  $.ajax({ 
@@ -90,32 +132,39 @@
 		//生成表格形式 返回字符串
 		function FormPanelTable(obj,attr,head,link,title){
 			//console.log(obj);
+			console.log(obj[0]);
+			console.log(mxRow + " " +mxCol + " " +mxFloor );
 			var output = "<div class=\"panel-heading\" \>"+title+"</div>";
 			output 	+= "<div class=\"panel-body\">";
 
-			output 	+= "<table class=\"table table-bordered \" style=\"font-size:10px;\"";
-
+			output 	+= "<table class=\"table \" style=\"font-size:10px;\"";
+			//顺序是
 			output 	+= "<tbody>";
 				output += "<tr>";
 				output += "<td>货仓0号</td>";
-				for(var c=0; c<8; c++){
+				for(var c=1; c<mxCol+1; c++){
 					output += "<td>"+c+"列</td>";
+					
+					console.log(c+"列/"+Number(mxCol+1)+"列");
 				}
 				output += "</tr>";
-				for(var r=0; r<5; r++){
+				
+				
+				for(var r=1; r<mxRow+1; r++){
 					output += "<tr class=\"houseRow\">";
-						output += "<td rowspan=\"2\">"+r+"行</td>";
-						for(var c=0; c<8; c++){
-							output += "<td floor=\"2\" house=\"0\" row=\""+r+"\" col=\""+c+"\"><span class=\"glyphicon glyphicon-unchecked\" style=\"color:DimGray \" ></span></td>";
+						output += "<td rowspan=\"3\">"+r+"行</td>";
+						for(var f=1; f<mxFloor+1; f++){
+							
+							for(var c=1; c<mxCol+1; c++){
+								output += "<td floor=\""+f+"\" house=\"0\" row=\""+r+"\" col=\""+c+"\"></td>";
+							
+							}
+							output += "</tr><tr>"
 						}
 						output += "</tr >";
-
-						output += "<tr class=\"houseRow\">";
-						for(var c=0; c<8; c++){
-							output += "<td floor=\"1\" house=\"0\" row=\""+r+"\" col=\""+c+"\"><span class=\"glyphicon glyphicon-unchecked\" style=\"color:DimGray \"> </span></td>";
-						}
-					output += "</tr >";
 				}
+				//<span class=\"glyphicon glyphicon-unchecked\" style=\"color:DimGray \" ></span>
+				
 			output  += "</tbody>";
 			output 	 += "</table>";
 			output 	 += "</div>";

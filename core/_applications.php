@@ -15,7 +15,7 @@
   		}
   		else {
   			;
-  			//nothing
+  			//通过验证，继续执行
   		}
   	?>
     <meta charset="utf-8">
@@ -28,12 +28,15 @@
     <!-- Bootstrap core CSS -->
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/prettify.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../css/bootstrap-select.min.css">
-		<link rel="stylesheet" type="text/css" href="../css/jPaginateStyle.css">
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap-select.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/jPaginateStyle.css">
     
-        <!-- Loading Flat UI -->
+    <!-- Loading Flat UI -->
     <link href="../css/flat-ui.css" rel="stylesheet">
 
+	<!-- Loading remind Css 提示样式 -->
+	<link href="../css/remind.custom.css" rel="stylesheet">
+	
     <style >
     .scrolls-horizontal{
 			overflow-x: scroll;
@@ -94,8 +97,12 @@
 			//var_dump($_GET);
 			//var_dump($_SESSION);
 		?>
+		
+		<div class="col-lg-3 col-md-3 col-sm-4 remindBox" id="remindBox">
+			<!-- 通过js AddRemind向内添加提示  -->
+		</div>
 		<div class="row-fluid">
-			<div class="col-lg-3">
+			<div class="col-lg-3 col-md-3">
 
 				<ul class="nav nav-pills nav-stacked rounded"   id="sideNav">
 				  <li><a class="navLink" href="#agentBox">代理商</a></li>
@@ -105,7 +112,7 @@
 				  	<ul class="nav collapse nav-pills nav-stacked rounded" id="appsNav">
 				  		<li><a class="navLink inApp" href="#appListBox">入库单</a></li>
 				  		<li><a class="navLink outApp" href="#appListBox">出库单</a></li>
-				  		<li><a class="navLink " href="#appListBox">发库单</a></li>
+				  		<!-- <li><a class="navLink " href="#appListBox">发库单</a></li> -->
 				  		<li><a class="navLink " href="#appOpPanel" id="navEditAppBtn">新建/修改库单</a></li>
 				  		<li><a class="navLink " href="#appDetailBox" id="navViewAppBtn">查看库单详情</a></li>
 				  	</ul>
@@ -153,7 +160,7 @@
 			</div>
 
 
-			<div class="col-lg-9">
+			<div class="col-lg-9 col-md-9">
 				<!--代理商-->
 				<div id="agentBox" class="navBlock">
 					代理商录入中
@@ -222,14 +229,12 @@
 
 					
 				</div>
-        <div id="_applicationDebug">
+        <div id="_applicationDebug" style="display: none;">
         	<p class="text-info">
         		<?php include_once("_applicationPhp.php"); ?>
           </p>
         </div>
-        <?php
-					//var_dump($_POST);
-				?>
+        
         <div data-role="page" class="panel panel-default navBlock" id="appOpPanel">
 					<div class="panel-heading">
 						接收新货单
@@ -335,6 +340,12 @@
 		//user的信息;
 		var userName = "<?php echo $_SESSION['user'];?>";
 		var userID = "<?php echo $_SESSION['userID'];?>";
+		var hint = "<?php echo $panelHint; ?>";
+		var hintTitle = "<?php echo $panelHintTitle; ?>";
+		var hintType  = "<?php echo $panelType; ?>";
+		console.log("告警类型"+hintType);
+		if(hint != "")
+			addRemind(hintTitle,hint,5000,hintType);
 		//过滤基值
 		var appFilter = {page:1,db:"wApplications",printInfo:getFilter,para:null,key:null,count:0,filterComplete:true,filterDetail:true};
 		//无过滤输入
@@ -350,7 +361,7 @@
 			$(linkName).parent().addClass('active');
 		}
 		$(".navLink").on("click",function(event){
-			$('#hintAlert').html("123");
+			//$('#hintAlert').html("123");
 			$(".navBlock").hide();
 			$($(this).attr('href')).show();
 			$('.navLink').parent().removeClass("active");
@@ -359,11 +370,13 @@
 			console.log($(this).parent());
 			
 			if($(this).hasClass('inApp')){
+				$('#appsOption').show();
 				appFilter.para = "AppIn";
 				appFilter.page = 1;
 				ReloadAppTxt();
 			}
 			if($(this).hasClass('outApp')){
+				$('#appsOption').show();
 				appFilter.para = "AppOut";
 				appFilter.page = 1;
 				ReloadAppTxt();
@@ -375,9 +388,11 @@
 				ReloadAppTxt();
 			}
 			//库单详情
+			
 			if($(this).attr('href') == "#appDetailBox"){
-				console.log("查看库单详情123");
+				console.log("查看库单详情");
 				$('#appDetailBox').html("<h5>未选定库单<br><small>从入库单或出库单中选择</small></h5>");
+				addRemind("未选择库单提示","从库单列表中选择库单详情",5000,"bs-callout-info");
 			}
 			//货代
 			if($(this).attr('href') == "#agentBox"){
@@ -579,6 +594,27 @@
 			}
 		  $('#agentSelect').html(ops);
 	   });
+	   
+	   
+	   function addRemind(title,content,time,type) {
+	   		console.log("call remind");
+		   	if(title== undefined){
+		   		title = "测试";
+		   		time = 5000;
+		   	}
+		   	if( type == undefined || type == ""){
+		   		type = "bs-callout-info";
+		   	}
+		   	var exsitRemind = $(".remindBox").find(".bs-callout").length;
+		   	var newRemind = "<div  class=\"bs-callout "+type+" remind\">";
+		   	newRemind += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>";
+		   	newRemind += "<h4>"+title+"</h4>";
+		   	newRemind += "<p>"+content+"</p>";
+		   	newRemind += "</div>";
+		   	$(".remindBox").append(newRemind);
+		   	$(".remindBox .remind").last().slideDown(500).delay(4000).slideUp(500);
+	   	
+	   }
 		   
 	   
     </script>

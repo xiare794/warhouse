@@ -74,7 +74,7 @@
 						$.post("_search.php?query="+query,function(data){
 								var obj = jQuery.parseJSON(data);
 								//console.log(obj);
-								var text = "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
+								var text = "<table class=\"table table-condensed table-hover\" style=\"font-size:85%;\"　>";
 								text 	+= "<thead>"+"<th>入库编码</th>"+"<th>类型</th>"+"<th>时间</th>"+"<th>内容</th>"+"</thead>";
 								text 	+= "<tbody>";
 								
@@ -159,7 +159,7 @@
 			output  += "</div>";
 			*/
 			output 	+= "<div class=\"panel-body\">"; 
-			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:10px;\"　>";
+			output 	+= "<table class=\"table table-condensed table-hover\" style=\"font-size:85%;\"　>";
 			output 	+= "<thead>";
 			for(var i in head){
 				output += "<th>"+head[i]+"</th>";

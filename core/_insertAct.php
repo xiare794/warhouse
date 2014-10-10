@@ -25,11 +25,11 @@
 		
 		if ($result = mysqli_query($connection, $query)) {
 			echo $result;
-		  echo $query;
+		  //echo $query;
 		}
 		else{
 		 echo '[we have a problem]: '.mysqli_error($connection);
-		 echo $query;
+		 //echo $query;
 		}
 	}
 ?>

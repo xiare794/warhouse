@@ -39,7 +39,7 @@
 	if($db=="warePackages") { 
 	
 	?>
-		<table class="table table-condensed table-hover " style="font-size:10px">
+		<table class="table table-condensed table-hover " >
 			<thead><th >ID</th><th>货代名称</th><th>进仓编号</th><th>简短备忘</th><th>操作</th></thead>
 			<tbody>
 	<?php
@@ -154,7 +154,7 @@
 	   //echo $query;
 	   if ($result = mysqli_query($connection, $query)) {
 				?>
-		<table class="table table-condensed table-hover" style="font-size:10px;" count="<?php echo $rawCount; ?>" >
+		<table class="table table-condensed table-hover" style="font-size:85%;" count="<?php echo $rawCount; ?>" >
 			<thead>
 				<?php 
 					//var_dump($_GET['filterDetail']);
@@ -283,8 +283,8 @@
 				//签发按钮
 				$('#signedBtn').click(function(){
 					//显示提示
-					var hint = "<div class=\"alert alert-success\" id=\"hintAlert\"><a href=\"#\" class=\"alert-link\">成功签发</a></div>";
-					$('#appListHeader').append(hint);
+					//var hint = "<div class=\"alert alert-success\" id=\"hintAlert\"><a href=\"#\" class=\"alert-link\">成功签发</a></div>";
+					//$('#appListHeader').append(hint);
 					
 					//增加备忘 actUserID,actType,(actTime),InStockID,actContent
 					var actUserID = userID;
@@ -299,11 +299,17 @@
 					});
 					
 					//签署动作，修改app签署属性 ;component.php + sign 是签署
-					$('#hintAlert').load("component.php?sign="+$('#appSignedUl').attr('key'),function(){
-						ReloadAppTxt();
+					//原来是打印至hintAlert 改为屏幕提示
+					
+					$.post("component.php?sign="+$('#appSignedUl').attr('key'),function(data) {
+						addRemind("库单签署",data,5000,"bs-callout-info");
 					});
+					
+					//$('#hintAlert').load("component.php?sign="+$('#appSignedUl').attr('key'),function(){
+					//	ReloadAppTxt();
+					//});
 					//关闭弹出框
-					$('#appSignedModal').modal('toggle');
+					$('#appSignedModal').modal('hide');
 					//刷新库单
 					
 				});
@@ -347,7 +353,7 @@
 							//$('.selectpicker').selectpicker('val',obj[0].wpAgentID);
 						});
 
-						//修改ui
+						//修改ui生成出库
 						$('#generateOutAppBtn').removeAttr("disabled");
 						$('#generateOutAppBtn').removeClass("btn-default");
 						$('#generateOutAppBtn').addClass("btn-primary");

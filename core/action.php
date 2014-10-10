@@ -80,11 +80,11 @@
 	<body >
 		<!-- action container -->
 			<div id="actionBody" class="row" >
-				<div class="bs-callout bs-callout-warning col-lg-6" id="actionOperateInfo" style="position:fixed; opacity:0.9; z-index:99">
+				<!--<div class="bs-callout bs-callout-warning col-lg-6" id="actionOperateInfo" style="position:fixed; opacity:0.9; z-index:99">
 					<h4>测试警告</h4>
 					<p>这里提供一些刷新的信息，2秒后消失</p>
 					<?php var_dump($_SESSION); ?>
-				</div>
+				</div>-->
 				<div class="navbar navbar-default" role="navigation">
 					<div class="container-fluid">
 						<div class="navbar-header">
@@ -129,6 +129,7 @@
 							"editAgent":"修改货代",
 							"newAgent":"新建货代",
 							"editApp":"修改库单",
+							"deleteApp":"删除库单",
 							"newApp":"新建入库单",
 							"newOutApp":"新建出库单",
 							"trayUnload":"下货架",
@@ -159,8 +160,8 @@
 	    async : false, 
 	    success : function(data){
 	    	//console.log(data);
-				var head = new Array("操作员","操作类型","入库编号","内容","时间");
-				var attr = new Array("wuName","actType","InStockID","actContent","actTime");
+				var head = new Array("操作员","操作类型","入库编号","时间","内容");
+				var attr = new Array("wuName","actType","InStockID","actTime","actContent");
 				var obj = jQuery.parseJSON(data);
 				var link = "wuName";
 				//console.log(obj);
@@ -190,13 +191,13 @@
 		function FormPanelTable(obj,attr,head,link,title){
 			console.log(obj);
 			var output = "";
-			output 	+= "<table class=\"table table-condensed table-hover table-responsive\" style=\"font-size:10px;\"";
+			output 	+= "<table class=\"table table-condensed table-hover table-responsive\" style=\"font-size:85%;\"";
 			output 	+= "<thead>";
 			for(var i in head){
 				if(head[i]=="内容")
-					output += "<th class=\"col-sm-4\">"+head[i]+"</th>";
+					output += "<th>"+head[i]+"</th>";
 				else
-					output += "<th class=\"col-sm-2\">"+head[i]+"</th>";
+					output += "<th>"+head[i]+"</th>";
 			}
 			output 	+= "</thead>";
 			output 	+= "<tbody>";
@@ -215,12 +216,16 @@
 						//console.log("相同");
 						output += "<td >"+obj[i][attr[j]]+"</td>";
 					}
+					else if("actTime" == attr[j]){
+						//console.log("相同");
+						output += "<td >"+obj[i][attr[j]]+"</td>";
+					}
 					else if("actType" == attr[j]){
 						console.log(obj[i][attr[j]]);
 						output += "<td >"+actionType[ obj[i][attr[j]]]+"</td>";
 					}
 					else{
-						output += "<td>"+obj[i][attr[j]]+"</td>";
+						output += "<td >"+obj[i][attr[j]]+"</td>";
 					}
 
 				}
