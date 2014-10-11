@@ -34,24 +34,29 @@
           <a class="navbar-brand" id="logo" href="_applications.php">WareHouse管理Web版</a>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav ">
-			<li><a href="wPackage.php">管理总览</a></li>
+			<!--<li><a href="wPackage.php">管理总览</a></li>-->
 			
             <li class="dropdown">
               <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown">网站地图 <b class="caret"></b></a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="_agents.php">货代</a></li>
+                <!--<li role="presentation"><a role="menuitem" tabindex="-1" href="_agents.php">货代</a></li>
 				<li role="presentation"><a role="menuitem" tabindex="-1" href="_package.php">货物包</a></li>
                 <li role="presentation"><a role="menuitem" tabindex="-1" href="_applications.php">表单(出入库单)</a></li>
                 <li role="presentation"><a role="menuitem" tabindex="-1" href="#">货架</a></li>
-                <li role="presentation" class="divider"></li>
                 <li role="presentation"><a role="menuitem" tabindex="-1" href="http://twitter.com/fat">托盘</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="../mobile/enter.html">移动版</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="deviceList.php">手持设备</a></li>
+                -->
+                
+                
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="../mobile/enter.php">手持设备界面</a></li>
+                <li role="presentation" class="divider"></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="deviceList.php">设备列表</a></li>
                 <li role="presentation"><a role="menuitem" tabindex="-1" href="userManage.php">用户管理</a></li>
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="wPackage.php">老版综合</a></li>
+                
+                <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="wPackage.php">老版综合</a></li>-->
               </ul>
             </li>
             <li><a href="instruction.php">使用说明</a></li>
+            <li><a href="../dokuwiki/doku.php">Wiki</a></li>
           </ul>
           	
           <ul class="nav navbar-nav navbar-right">

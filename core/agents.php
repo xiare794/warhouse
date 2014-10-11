@@ -324,8 +324,8 @@
 					//console.log(data);
 					var obj = jQuery.parseJSON(data);
 					console.log(obj);
-					var head = new Array("货物代码","名称","入库单","入库数量","出库单","出库数量","出库时间");
-					var attr = new Array("InStockID","appName","appIn","inCount","appOut","outCount","outTime");
+					var head = new Array("货物代码","名称","入库单","入库数量","入库时间","出库单","出库数量","出库时间");
+					var attr = new Array("InStockID","appName","appIn","inCount","inTime","appOut","outCount","outTime");
 					$('#agentInStock').html(FormPanelTable(obj,attr,head,null,"已完成出库货物列表"));
 				});
 				//未完成出入库的为一组

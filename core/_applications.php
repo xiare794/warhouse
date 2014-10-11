@@ -1,11 +1,10 @@
-<!-- 2014.09.28 -->
 <?php require_once("config.php"); //session
 ?>
 <!DOCTYPE html>
 <html lang="cn">
   <head>
   	<?php
-  		//测试从笔记本上传同步2014/10/10
+  		
   		include("_db.php"); 
   	 	include("functions_manage.php");
   	 	//如果没有用户信息，就跳转回登陆页面
@@ -251,7 +250,7 @@
 										<select class="selectpicker" id="agentSelect" name="agentSelect">
 										  <option value="0">货代数据导入失败</option>
 										</select>
-										<a href="_agents.php" ><span class="fui-user">编辑货代  </span></a>
+										<!--<a href="_agents.php" ><span class="fui-user">编辑货代  </span></a>-->
 									</div>
 							  </div>
               </p>

@@ -1,0 +1,71 @@
+====== 欢迎来到威尔豪斯仓储系统 ======
+===== 仓储系统数据表 =====
+
+==== 货物代理商 Wagents数据表 ====	
+  *waID
+  *waName
+  *waType
+  *waTel
+  *waAddr
+  *waContact
+  *waQuan
+  *waCurrLog
+  *waNote
+
+==== 货单（出入货单）Wapplications 数据表 ====
+  *appID
+  *wpID
+  *InStockID
+  *appName
+  *appMaitou
+  *appCount
+  *appIncludeItems
+  *appType
+  *appBookingDate
+  *appDate
+  *appOperator
+  *appFromTrayID
+  *appToTrayID
+  *appDeviceID
+  *appCameraFile
+  *appComplete
+  *appStatus
+  *appSignned
+
+==== 货物包 waPackages数据表 ====
+  *wpID
+  *wpAgentID
+  *wNotePrivate
+  *wNotePublic
+  *wCloseInfo
+
+
+==== 仓位 wSlots 数据表 ====
+  *wSlotID
+  *tsWareHouse
+  *tsPosRow
+  *tsPosCol
+  *tsPosFloor
+  *wtID
+
+==== 托盘 wTrays 数据表 ====	
+  *wtID
+  *rfid
+  *twStatus
+  *wtAppID
+  *wtAppOutID
+  *wSlotID
+  *actID
+  *twWareCount
+  *twWareItemID
+  *wpID
+  *UpdateTime
+  
+==== 人员wUsers 数据表====
+  *userID
+  *wuName
+  *wuNamePY
+  *wuPassword
+  *admin
+  *manager
+  *operator
