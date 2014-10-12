@@ -260,15 +260,20 @@
         <div data-role="content" id="scanTrayContent">
         	<ul data-role="listview" id="scanTrayContentUL">
             </ul>
-            <p>
+            <!--<p>
             	<a data-role="button" data-theme="d" data-inline="true" onClick="onceScaned(654321)">假装扫描６５４３２１</a
         >
         		<a data-role="button" data-theme="d" data-inline="true" onClick="onceScaned(123)">假装扫描123</a
         >
-            </p>
+            </p>-->
             </div>
         <div data-role="footer" data-position="fixed">
-            <h1 id="scanedTrayFooter"><a data-role="button" data-theme="d" data-inline="true" >Page End</a></h1>
+        	<div data-role="navbar" data-theme="c" >
+	        	<ul>
+	        		<li><a data-role="button" data-theme="d" id="clearScanResult" data-inline="true" ><h2>清除记录</h2></a></li>
+	        	</ul>
+	        	
+	        </div>
         </div>
     </div>   
     
@@ -481,6 +486,10 @@
     var userID = "<?php echo $_SESSION['userID'];?>";
 
     console.log("用户"+userName+"|用户ID"+userID);
+    
+    $("#clearScanResult").on("click",function(){
+    	$('#scanTrayContentUL').html("");
+    });
 </script>
 <script type="application/javascript" src="enter-js.js"></script>
 
