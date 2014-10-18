@@ -51,4 +51,20 @@
 		echo json_encode($List);
 	}
 
+
+	//查询query
+	if(isset($_GET['query'])){
+		$List = array();
+		$query = $_GET['query'];
+		if ($result = mysqli_query($connection, $query)) {
+			while($row = mysqli_fetch_array($result)){
+				array_push($List,$row);
+			}
+		}
+		else{
+			 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		echo json_encode($List);
+	}
+
 ?>
