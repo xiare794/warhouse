@@ -99,7 +99,7 @@
 						      	//var_dump($_POST);
 						      	if(isset($_POST["login-name"])){
 							      	if( $_POST["login-name"] != ""){
-								      	$query = "SELECT `wuPassword`,`userID` FROM wUsers WHERE `wuName`= \"".$_POST["login-name"]."\"";
+								      	$query = "SELECT `wuPassword`,`userID`,`job` FROM wUsers WHERE `wuName`= \"".$_POST["login-name"]."\" OR `CODE`= \"".$_POST["login-name"]."\" ";
 								      	$result = mysqli_query($connection, $query);
 								      	if(!$result){
 								      	 echo '[we have a problem]: '.mysqli_error($connection);
@@ -107,22 +107,26 @@
 								      	}
 								      	else{
 								      		
-
+								      		$findUser = false;
 									      	while($row = mysqli_fetch_array($result)){
 									      		//var_dump($row);
 									      		//var_dump($_POST['login-pass']);
 									      		if( $row['wuPassword'] == $_POST['login-pass']){
 									      			$_SESSION['user'] = $_POST['login-name'];
 									      			$_SESSION['userID'] = $row['userID'];
+									      			$_SESSION['job'] = $row['job'];
 									      			echo "登陆成功";
+									      			$findUser = true;
 									      		}
 									      	}
-									      	if( mysqli_num_rows($result) == 0){
-									      		echo "没有找到该用户:".$_POST["login-name"];
-									      	}
-									      	else{
-									      		echo "用户密码不匹配";
-									      	}
+									      	if($findUser){
+										      	if( mysqli_num_rows($result) == 0){
+										      		echo "没有找到该用户:".$_POST["login-name"];
+										      	}
+										      	else{
+										      		echo "用户密码不匹配";
+										      	}
+										      }
 									      }
 								    	}
 								    	else{
@@ -164,7 +168,7 @@
 	  					echo "window.location.href = \"".$_SESSION['previewPage']."\"";
 	  				}
 	  				else {
-	  					echo "window.location.href = \"wPackage.php\"";
+	  					echo "window.location.href = \"_applications.php\"";
 	  				}
   				}
   			}

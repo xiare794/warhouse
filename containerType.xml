@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>集装箱箱型说明</Title>
+  <Author>DADI</Author>
+  <LastAuthor>DADI</LastAuthor>
+  <Created>2014-11-13T01:15:57Z</Created>
+  <LastSaved>2014-11-13T01:26:33Z</LastSaved>
+  <Version>12.00</Version>
+ </DocumentProperties>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>9570</WindowHeight>
+  <WindowWidth>21495</WindowWidth>
+  <WindowTopX>120</WindowTopX>
+  <WindowTopY>120</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Center"/>
+   <Borders/>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s64">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s65">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s66">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s67">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s68">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s70">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="s71">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="宋体" x:CharSet="134" ss:Size="11"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="containerType">
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="39" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="13.5">
+   <Column ss:Index="3" ss:AutoFitWidth="0" ss:Width="105.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="210.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="196.5"/>
+   <Row>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">序号</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">箱尺寸</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">箱类型</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">箱尺寸/类型说明</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">需要转换类型说明</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">20D  20DV  20DC  20GP  22G1  22GP</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GS</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺普通箱（3门）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22GS</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺普通箱（2门）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22GT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">4</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GW</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺普通箱（超宽）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22GW</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PF</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺框架箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22PF  22P3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PL</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺平台箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22PL</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">7</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">R1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺温控箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">20R1  22R1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">8</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">SN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺挂衣箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">22SN  22S3  22HT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">9</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">TN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺罐状箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">20TK  22TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">T1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺罐状箱(无横梁)</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">20TK  22TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">11</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">UT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺开顶箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">20OT  22UT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">12</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">25</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺高箱普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">25GP</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">13</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">25</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">R1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺冷箱高箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">25R1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">14</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">25</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">UT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">20英尺开顶高箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">25UT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">15</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">40'D  40GP  40DV  42G1  43GP</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">16</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺普通箱（2门）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">43GT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">17</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GW</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺普通箱（超宽）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">43GW</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">18</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PF</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺框架箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">43PF  43P3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">19</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PL</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺平台箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">43PL</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">20</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">R1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺温控箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">42R1  42RF</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">21</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">SN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺挂衣箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">42HT  40HG  40HH  40HT  43SN  43S3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">22</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">TN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺罐状箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">40TK  43TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">23</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">T1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺罐状箱(无横梁)</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">40TK  43TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">24</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">42</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">UT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺开顶箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">40OT  43UT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">25</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">40HC  40HQ  45G1  45GP  40'H</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">26</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GS</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱普通箱（3门）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45GS</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">27</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱普通箱（2门）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45GT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">28</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GW</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱普通箱（超宽）</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45GW</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">29</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PF</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱框架箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45PF  45P3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">30</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">PL</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱平台箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45PL</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">31</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">R1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱温控箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45R1  45RH  40HR  40HQRF</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">32</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">SN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱挂衣箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45SN  45HG  45S3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">33</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">TN</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱罐状箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45TK  45TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">34</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">T1</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱罐状箱(无横梁)</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45TK  45TN</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">35</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="Number">45</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">UT</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">40英尺高箱开顶箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45UT</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">36</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">L2</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">42英尺普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">L2GP</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">37</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">L5</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">GP</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">45英尺普通箱</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">45HQ  45HC  L5G1  L5GP</Data></Cell>
+   </Row>
+   <Row ss:Height="14.25">
+    <Cell ss:StyleID="s66"><Data ss:Type="Number">38</Data></Cell>
+    <Cell ss:StyleID="s70"><Data ss:Type="String">L5</Data></Cell>
+    <Cell ss:StyleID="s70"><Data ss:Type="String">SN</Data></Cell>
+    <Cell ss:StyleID="s70"><Data ss:Type="String">45英尺挂衣箱</Data></Cell>
+    <Cell ss:StyleID="s71"><Data ss:Type="String">L5SN</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>6</ActiveRow>
+     <ActiveCol>3</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

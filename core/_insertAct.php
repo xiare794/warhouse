@@ -4,6 +4,7 @@
 	$table = "wActions";
 	//时间使用php现在时间
 	if(isset($_GET['actTime']))
+		date_default_timezone_set("Asia/Hong_Kong");
 		$_GET['actTime']= date('Y-m-d H:i:s');
 
 	insertNewTableItem($table,$_GET);

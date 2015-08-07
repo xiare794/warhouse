@@ -171,7 +171,7 @@
 	
 	function getAPPbyID($id){ //通过appID获得APP
 		global $connection;
-		$query = "SELECT * FROM `wApplications` WHERE appID = '".$id."' ";
+		$query = "SELECT * FROM `wAppIn` WHERE appID = '".$id."' ";
 		$result = mysqli_query($connection, $query);
 		//var_dump($result);
 		if(!$result){
@@ -193,7 +193,7 @@
 	}
 	function passApp($id){
 		global $connection;
-		$query = "UPDATE `wApplications` SET `appSignned`=1 WHERE appID = '".$id."' ";
+		$query = "UPDATE `wAppIn` SET `appStatus`=1 WHERE appID = '".$id."' ";
 		$result = mysqli_query($connection, $query);
 		
 		if(!$result){

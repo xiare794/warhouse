@@ -63,7 +63,7 @@
             
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  用户:<?php echo $_SESSION['user']?> <span class="caret"></span>
+                  用户:<?php if(isset($_SESSION['user'])) echo $_SESSION['user']; else echo"未登录";?> <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li><a id="logout">退出登陆</a></li>

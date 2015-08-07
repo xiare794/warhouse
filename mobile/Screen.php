@@ -27,6 +27,7 @@
         <div data-role="content" data-position="fixed" >
             <!--<h5 id="curTime">下午 14:35</h5>-->
             <h1 id="Actions"></h1>
+            <A HREF="javascript:window.print()">testPrint</a>
         </div>
 
     </div>
@@ -45,8 +46,9 @@
   //获取最新的动作
   function getLastestAction(){
     var query ="SELECT * FROM wActions ORDER BY `actID` DESC LIMIT 1";
+    //console.log(query);
     $.post("phpSearch.php?query="+query,function(data){
-      //console.log(data);
+      //$("#Actions").html(data);
       var obj = jQuery.parseJSON(data);
       var sec = CompareTimeMin(obj[0]['actTime']);
 

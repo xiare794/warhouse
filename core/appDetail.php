@@ -34,6 +34,7 @@
 	  //库单具体情况
 	  //
 	  /* 分离url */
+
 	  var aQuery = window.location.href.split("?");
 	  var aGET = new Array();
     if(aQuery.length > 1)
@@ -55,13 +56,13 @@
 
 	  var appID = aGET['appID'];
 	  appID = <?php if(isset($_GET['appID'])) echo $_GET['appID']; else echo 0; ?>;
-	  console.log(appID);
+	  console.log("打印出来appID="+appID);
 
 	  //查询对应货代和app
 	  var query = "SELECT a.waName, a.waType, a.waTel, a.waAddr, a.waContact, a.waNote, ";
-	  query 	 += "app.appName,app.InStockID,app.appType, app.appID, app.appMaitou, app.appCount, app.appBookingDate, app.appComplete "
-	  query 	 += "FROM wAgents a, warePackages p, wApplications app ";
-	  query 	 += "WHERE a.waID=p.wpAgentID AND p.wpID=app.wpID AND app.appID="+appID;
+	  query 	 += "app.appName,app.InStockID, app.appID, app.appMaitou, app.appCount, app.appBookingDate, app.appStatus "
+	  query 	 += "FROM wAgents a, wAppIn app ";
+	  query 	 += "WHERE  a.waID=app.agentID AND app.appID="+appID;
 	  $.ajax({ 
 	    type : "post", 
 	    url : "_search.php?query="+query,
@@ -80,14 +81,14 @@
 
 	  //查询同一进仓编号下的其他表单
 	  var query = "SELECT app1.* ";
-	  query 	 += "FROM wApplications app1, wApplications app2 ";
+	  query 	 += "FROM wAppIn app1, wAppIn app2 ";
 	  query 	 += "WHERE app1.InStockID = app2.InStockID AND app1.appID<>"+appID+"  AND app2.appID="+appID ;
 	  $.ajax({ 
 	    type : "post", 
 	    url : "_search.php?query="+query,
 	    async : false, 
 	    success : function(data){
-	    	//console.log(data);	
+	    	console.log(data);	
 	    	var head = new Array("货单名称","进仓编号","出入库","货单ID","唛头","数量","时间","完成");
 				var attr = new Array("appName","InStockID","appType","appID","appMaitou","appCount","appBookingDate","appComplete");
 	    	var obj = jQuery.parseJSON(data);
@@ -105,7 +106,7 @@
 
 	  //查询此货单下的托盘
 	  var query = "SELECT t.*, u.*";
-	  query 	 += "FROM wTrays t, wareUnit u ";
+	  query 	 += "FROM wTrays t, wUnit u ";
 	  query 	 += "WHERE (t.wtAppID="+appID+" OR t.wtAppOutID="+appID+") AND u.trayID=t.wtID ";
 	  query 	 += "ORDER by t.wtID";
 	  $.ajax({ 
@@ -113,7 +114,7 @@
 	    url : "_search.php?query="+query,
 	    async : false, 
 	    success : function(data){
-	    	//console.log(data);	
+	    	console.log(data);	
 	    	var head = new Array("托盘号","托盘数字编码","托盘状态","托盘入库单","托盘出库单","托盘仓库","托盘货物数量","托盘更新时间","货物ID","货物名称","宽(cm)","高(cm)","长度(cm)","重量(kg)","箱数量");
 				var attr = new Array("wtID","rfid","twStatus","wtAppID","wtAppOutID","wSlotID","twWareCount","UpdateTime","wiID","wiName","width","height","length","weight","count");
 	    	var obj = jQuery.parseJSON(data);
@@ -147,7 +148,7 @@
 	  function FormTableWithSingleObj(obj,head,link,title){
 	  	var output ="<div class=\"panel-heading\" \>"+title+"</div>";
 	  	output 	+= "<div class=\"panel-body\">";
-	  	output 	+= "<table class=\"table table-condensed table-hover table-bordered scrolls-horizontal\" style=\"font-size:10px;\"";
+	  	output 	+= "<table class=\"table table-condensed table-hover table-bordered scrolls-horizontal\" style=\"font-size:85%;\"";
 	  	var dataRow = "";
 	  	var headerRow ="";
 	  	var col=0;

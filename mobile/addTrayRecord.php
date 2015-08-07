@@ -1,7 +1,7 @@
 <?php
 	include_once("_db.php");
 	//如果针对某货单操作
-	$tableName = "wareUnit";
+	$tableName = "wUnit";
 	$array = $_POST;
 
 	function insertNewTableItem($tableName, $array){
@@ -40,7 +40,7 @@
 	
 	if(isset($_POST['weight'])){	
 		//var_dump($_POST);
-		insertNewTableItem("wareUnit",$_POST);
+		insertNewTableItem("wUnit",$_POST);
 		
 	}
 	//如果是绑定操作

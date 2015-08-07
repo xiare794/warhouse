@@ -140,12 +140,68 @@
 
 		//echo "</pre>";
 	}
+
+
+	function insertNewTableItem($tableName, $array){
+		global $connection;
+		
+		$query ="INSERT INTO `".$tableName."` (";
+		foreach($array as $key=>$value){
+			$query .= "`".$key."` ,";
+		}
+		$query = trim($query, ",");
+		$query .= ") VALUES (";
+		foreach($array as $key=>$value){
+			$query .= "'".$value."',";
+		}
+		$query = trim($query, ",");
+		$query .= ")";
+		
+		if ($result = mysqli_query($connection, $query)) {
+			return 1;
+		}
+		else{
+		 return '[we have a problem]: '.mysqli_error($connection);
+		 //echo $query;
+		}
+	}
 	
 	//新增app响应，包含了检查货物包
 	if(isset($_POST['new'])){
+		$table = "wAppIn";
+		unset($_POST['new']);
+
+		unset($_POST["OpInput"]);
+		//加入OpInput 货单输单人 此时OpInput是name，需要转化为id
+		//unset($_POST['OpInput']);
+		//$_POST["OpInput"] = $_SESSION['userID'];
+
+		$ret = insertNewTableItem($table,$_POST);
+
+		//$ret .= "OpInput".$_POST["OpInput"];
+		if( $ret == "1"){
+			$actUserID = $_SESSION['userID'];
+			$actTime = date('Y-m-d H:i:s');
+			$actContent = "新建入库单成功，作业号：".$_POST['appSeries'].",".$_POST["appName"]."预入".$_POST["appPreCount"]."箱";
+			$para = array("actUserID"=>$actUserID,"actType"=>"入库","actTime"=>$actTime,"InStockID"=>$_POST["InStockID"],"actContent"=>$actContent);
+			
+
+			$panelHintTitle = "入库单生成成功";
+			$panelHint = $actContent;
+			$panelType = "bs-callout-warning";
+			addMemo($para);
+
+		}
+		else{
+			$panelHintTitle = "入库单生成失败";
+			$panelHint = $ret;
+			$panelType = "bs-callout-danger";
+
+		}
+		/*
 		//先检索是否已存在库单
 		$app_wpID = null;
-		$pQuery = "SELECT `wpID` FROM `wApplications` WHERE `InStockID` = \"".$_POST['InStockID']."\"";
+		$pQuery = "SELECT `wpID` FROM `wAppin` WHERE `InStockID` = \"".$_POST['InStockID']."\"";
 		if ($result = mysqli_query($connection, $pQuery)) {
 			if($row = mysqli_fetch_array($result))
 				$app_wpID = $row['wpID'];
@@ -153,7 +209,7 @@
 		else
 			echo '[we have a problem]: '.mysqli_error($connection);
 			
-		
+		//添加增加库单
 		$query = "INSERT INTO `wApplications` ";
 		$query .= "(`appName`, `InStockID`, `appMaitou`, `appCount`, ";
 		$query .= "`appType`, `appBookingDate`, `deliverComp`, `deliverTruckID`, `deliverDriver`, `deliverMobile`, `extraInfo`) ";
@@ -214,10 +270,12 @@
 		else{
 			echo '[we have a problem]: '.mysqli_error($connection);
 		}
+
+		*/
 	}
 	function addMemo($para){
 		global $connection;
-		
+		global $panelHint;
 		$query ="INSERT INTO `wActions` (";
 		foreach($para as $key=>$value){
 			$query .= "`".$key."` ,";
@@ -231,12 +289,17 @@
 		$query .= ")";
 		
 		if ($result = mysqli_query($connection, $query)) {
-			echo $result;
-		  echo $query;
+			$panelHint .= ",记录添加成功";
+			//echo $result;
+		  //echo $query;
 		}
 		else{
-		 echo '[we have a problem]: '.mysqli_error($connection);
-		 echo $query;
+			$panelHint .= ",记录添加失败";
+		 
+		 //echo '[we have a problem]: '.mysqli_error($connection);
+		 //echo $query;
 		}
+		//echo "add memo";
+		//echo $panelHint;
 	}
 ?>
