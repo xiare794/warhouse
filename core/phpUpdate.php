@@ -13,10 +13,12 @@
 			//var_dump($result);
 		}
 		else{
+			echo $result;
 			echo "0";
 		}
 	}
 	else{
+		echo $result;
 		echo "0";	
 	}
 	

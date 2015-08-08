@@ -145,7 +145,9 @@
 						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelBtn btn btn-primary btn-xs\" > <span class=\"glyphicon glyphicon-edit\" style=\"color:white\"></span></a>";
 						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelDetail btn btn-warning btn-xs\" > <span class=\"glyphicon glyphicon-zoom-in\" style=\"color:white\"></span></a>";
 						echo "<a href=\"#\" appId = \"".$row['appID']."\" class=\"btn btn-success btn-xs ws-print\" > <span class=\"glyphicon glyphicon-print\" ></span></a>";
-						
+						if($row['appStatus'] == 2)
+						echo "<a href=\"#\" appId = \"".$row['appID']."\" class=\"btn btn-success btn-xs ws-fullComplete\" > <span class=\"glyphicon glyphicon-ok\" ></span></a>";
+							
 						echo "</td>";
 
 						
@@ -276,7 +278,6 @@
 	          async : false, 
 	          success : function(data){ 
 	          	addRemind("库单记录添加",data,5000,"bs-callout-info");
-
 	          } 
 	        });
 	        ReloadAppTxt();
@@ -363,7 +364,18 @@
 
 					// showModelDialog("_print.php?appId="+$(this).attr("appId"),210,299)
 
-				})
+				});
+
+				
+				$(".ws-fullComplete").on("click",function(){
+					console.log($(this).attr("appId"));
+					$.get("coreFunction.php",
+						{FullCompleteAppIn:$(this).attr("appId")},
+						function(data){
+						addRemind("库单检查后完成",data,5000,"bs-callout-info");
+						//alert(data);
+					});
+				});
 
 			}
 

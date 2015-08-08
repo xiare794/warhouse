@@ -203,6 +203,23 @@
 			echo $id."号库单已签署";
 		}
 	}
+
+
+	function FullCompleteAppIn($id){
+		global $connection;
+		$query = "UPDATE `wAppIn` SET `appStatus`=3 WHERE appID = '".$id."' ";
+		$result = mysqli_query($connection, $query);
+		
+		if(!$result){
+		 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		else{
+			echo $id."号库单已完成入库";
+		}
+	}
+	if(isset($_GET['FullCompleteAppIn'])){
+		FullCompleteAppIn($_GET['FullCompleteAppIn']);
+	}
 	
 	
 ?>

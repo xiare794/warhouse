@@ -635,7 +635,7 @@
 
 		  if(ap_Str.length>0){
 				//更新appOut的appIn列表
-		  	var query = "table=wAppOut&&idAttr=wAppID&&idValue="+outAppID+"&&tAttr=appIns&&tValue=\""+ap_Str+"\"";
+		  	var query = "table=wAppOut&&idAttr=wAppID&&idValue="+outAppID+"&&tAttr=appIns&&tValue="+ap_Str;
 		  	console.log(query);
 		  	//更新托盘出库单号 ajax实时更改托盘对应的出库
 		  	$.ajax({
@@ -643,6 +643,7 @@
 			    url : "phpUpdate.php?"+query,
 			    async : false, 
 			    success : function(data){
+
 			    	console.log("添加出库单的入库"+data);
 			    }
 			  });
