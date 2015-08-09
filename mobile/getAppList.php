@@ -1,6 +1,7 @@
 
 <?php
 	include_once("_db.php");
+	/*
 	$start = 0;
 	$step = 5;
 	$assigned = true;
@@ -14,11 +15,43 @@
 		$step = $_GET['step'];
 		$assigned = $_GET['Assigned'];
 		$descend = $_GET['timeDescend'];
-		$type = $_GET['appType'];
+		
 		$onlyUncomplete = $_GET['onlyUnCom'];
 	}
+	*/
+
+	//进出类型
+	$type = $_GET['type'];
+	//筛选未完成
+	//基础query
+	$query = "SELECT * FROM ";
+	//如果入库
+	if($type== 'in'){
+		$query .= " `wAppIn` ";
+		if( isset($_GET['idx']) ){
+			$query .= " WHERE `appID`=".$_GET['idx'];
+		}
+		if(isset($_GET['unfinished']) ) {
+			$query .= " WHERE `appStatus` <3 ";
+		}
+	}
+	else if($type = "out"){
+		$query .= " `wAppOut` ";
+		if(isset($_GET['idx'])){
+			$query .= " WHERE `wAppID`=".$_GET['idx'];
+		}
+		if(isset($_GET['unfinished'])){
+			$query .= " WHERE `appStatus` !=3 ";
+		}
+	}
+	//echo $query;
 	
-	$query = "SELECT * FROM `wApplications` ";
+	/*
+	if($type== 'in')
+		$query .= "`wAppIn` WHEHE `appStatu` !=4 ";
+	else if($type=='out')
+		$query .= "`wAppOut` WHEHE `appStatu` !=4 ";
+
 	//如果取单独信息
 	if(isset($_GET['idx'])){
 		$query .="WHERE `appID`=".$_GET['idx'];
@@ -26,18 +59,18 @@
 	elseif(isset($_GET['all'])){
 		$query .="";	
 	}
-	elseif(isset($_GET['type']) && isset($_GET['unfinished']) ){
-		$query .="WHERE `appType`=\"".$_GET['type']."\" AND `appComplete` = 0";
+	elseif( isset($_GET['unfinished']) ){
+		$query .="WHERE `appStatus` != 3";
 	}
 	else{
 		//筛选签字
 		//$query ="SELECT * FROM `wApplications` ";
-		$query .= " WHERE `appType`=\"".$type."\" ";
+		$query .= " WHERE ";
 		if($assigned == "true"){
-			$query .= "AND `appSignned`=1 ";
+			$query .= "`appSignned`=1 ";
 		}
 		if($onlyUncomplete == "true"){
-			$query .= "AND `appComplete`= \"0\" ";
+			$query .= "`appComplete`= \"0\" ";
 			//echo "uncomp = ".$onlyUncomplete."<br>";
 		}
 		if($descend == true){
@@ -50,11 +83,10 @@
 		//筛选起始终止
 		$query .= "LIMIT ".$start.",".$step;
 	}
-	
+	*/
 	//echo $query;
 	$appList = array();
 	if ($result = mysqli_query($connection, $query)) {
-			
 			while($row = mysqli_fetch_array($result)){
 				//echo $row['appOperator'];
 				array_push($appList,$row);

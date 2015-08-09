@@ -114,6 +114,39 @@
 		}
 		echo json_encode($List);
 	}
+
+	//删除query
+	if(isset($_GET['delQuery'])){
+		$List = array();
+		$query =  $_GET['delQuery'];
+		
+		if ($result = mysqli_query($connection, $query)) {
+			echo $result;
+		}
+		else{
+			echo "query -".$query."-<br>";
+			 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		echo json_encode($List);
+	}
+
+
+	//安卓端请求，找出所有需要推送的信息
+	if(isset($_GET['android'])){
+		$List = array();
+		$query =  "SELECT * FROM `wAppIn` WHERE `appStatus`=1 ";
+		
+		if ($result = mysqli_query($connection, $query)) {
+			while($row = mysqli_fetch_array($result)){
+				array_push($List,$row);
+			}
+		}
+		else{
+			echo "query -".$query."-<br>";
+			 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		echo json_encode($List);
+	}
 	
 	
 ?>

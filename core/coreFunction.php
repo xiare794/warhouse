@@ -171,7 +171,7 @@
 	
 	function getAPPbyID($id){ //通过appID获得APP
 		global $connection;
-		$query = "SELECT * FROM `wApplications` WHERE appID = '".$id."' ";
+		$query = "SELECT * FROM `wAppIn` WHERE appID = '".$id."' ";
 		$result = mysqli_query($connection, $query);
 		//var_dump($result);
 		if(!$result){
@@ -193,7 +193,7 @@
 	}
 	function passApp($id){
 		global $connection;
-		$query = "UPDATE `wApplications` SET `appSignned`=1 WHERE appID = '".$id."' ";
+		$query = "UPDATE `wAppIn` SET `appStatus`=1 WHERE appID = '".$id."' ";
 		$result = mysqli_query($connection, $query);
 		
 		if(!$result){
@@ -202,6 +202,23 @@
 		else{
 			echo $id."号库单已签署";
 		}
+	}
+
+
+	function FullCompleteAppIn($id){
+		global $connection;
+		$query = "UPDATE `wAppIn` SET `appStatus`=3 WHERE appID = '".$id."' ";
+		$result = mysqli_query($connection, $query);
+		
+		if(!$result){
+		 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		else{
+			echo $id."号库单已完成入库";
+		}
+	}
+	if(isset($_GET['FullCompleteAppIn'])){
+		FullCompleteAppIn($_GET['FullCompleteAppIn']);
 	}
 	
 	

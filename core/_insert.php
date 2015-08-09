@@ -8,6 +8,7 @@
 	}
 
 	unset($_POST['waID']);
+	unset($_POST['new']);
 
 	insertNewTableItem($table,$_POST);
 

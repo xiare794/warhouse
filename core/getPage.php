@@ -1,111 +1,43 @@
-	<?php
+<?php
 	include_once("_db.php"); //连接数据库专用文件 
 	include_once("functions_manage.php");
-	//得到数据库
+	$users = getUser();
+
+	//var_dump($users);
+	//得到数据库 目前就AppIn用
 	if(isset($_GET['db']))
 		$db=$_GET['db']; 
 	else
-		$db = "warePackages";
+		$db = "none";
 	
-	$tableItemCount = getTableLength($db); //总记录数
+	//$tableItemCount = getTableLength($db); //总记录数
+	
 	//得到页码
-	/*
 	if(isset($_GET['page']))
 		$page=$_GET['page']; //获取页码 
 	else
 		$page = 1;
-	$pagesize=50; //每页显示数 
-	$pageCount=ceil($tableItemCount/$pagesize); //总页数
-	*/
-	
-	if(isset($page)){
-	   
-	   $startPage=($page-1)*$pagesize;
-	   $query = "SELECT * FROM `".$db."` ";
-	   $query .= "LIMIT ".$startPage.",".$pagesize;
-	   //$query .= " ORDER BY UNIX_TIMESTAMP(appBookingDate) DESC";
-	   if ($result = mysqli_query($connection, $query)) {
+	$pagesize=10; //每页显示数 
+	//$pageCount=ceil($tableItemCount/$pagesize); //总页数
 	
 	
-		//获取货代名称的列表
-		$clientQuery = "SELECT * FROM `wAgents` ";
-		$clientArray = array();
-		if( $cResult = mysqli_query($connection, $clientQuery) )
-		while($row = mysqli_fetch_array($cResult)){
-			$clientArray[$row['waID']] = $row['waName'];
-		}
+	
+	if($db=="wAppIn") {
 		
-		
-	if($db=="warePackages") { 
-	
-	?>
-		<table class="table table-condensed table-hover " >
-			<thead><th >ID</th><th>货代名称</th><th>进仓编号</th><th>简短备忘</th><th>操作</th></thead>
-			<tbody>
-	<?php
-					while($row = mysqli_fetch_array($result)){
-						
-						//获取相同wpID的进仓编号的列表
-						//echo "<br>"."row['wpID'] = ".$row['wpID']."<br>";
-						$appQuery = "SELECT * FROM `wApplications` WHERE `wpID` = ".$row['wpID'];
-						//$clientQuery = "SELECT * FROM `wAgents` ";
-						//echo $appQuery;
-						$inStockArray = array();
-						if( $aResult = mysqli_query($connection, $appQuery) ){
-						
-							while($arow = mysqli_fetch_array($aResult)){
-								$inStockArray[$arow['wpID']] = $arow['InStockID'];
-								//var_dump($arow['InStockID']);// $arow['InStockID'];
-							}
-						}
-						if(!$aResult){
-						 	echo '[we have a problem]: '.mysqli_error($connection);
-						}
-						//echo "在哪？";
-						//var_dump($inStockArray);
-						
-						echo "<tr>";
-						echo "<td>".$row['wpID']."</td>";
-						echo "<td>".$clientArray[$row['wpAgentID']]."</td>";
-						//var_dump($inStockArray);
-						echo "<td>".$inStockArray[(int)$row['wpID']]."</td>";
-						echo "<td>".$row['wNotePrivate']."</td>";
-						
-						echo "<td><a class=\"showPackBtn\" id=\"".$row['wpID']."\">查看</a></td>";
-						//echo "<td><a class=\"packEditBtn\" id=\"".$row['wpID']."\">修改</a></td>";
-						
-						echo "</tr>";
-					}
-				}
-			}
-		?>
-				
-			</tbody>
-		</table>
-	<?php 
-		}
-	
-	
-	if($db=="wApplications") { 
-		//if(isset($page)){ 
-		   //$startPage=($page-1)*$pagesize;
+		if(isset($page)){ 
+		   $startPage=($page-1)*$pagesize;
 		   $OPT="";
 		   if(isset($_GET['para'])){
-				if($_GET['para'] == "AppUnSign"){
-					$OPT = " WHERE `appSignned`=0";
-				}
-				if($_GET['para'] == "AppUnComp"){
-					$OPT = " WHERE `appComplete`=0";
-				}
-				if($_GET['para'] == "AppIn"){
-					$OPT = " WHERE `appType`= \"in\"";
-				}
-				if($_GET['para'] == "AppOut"){
-					$OPT = " WHERE `appType`= \"out\"";
-				}
-				if($_GET['para'] == "AppMove"){
-					$OPT = " WHERE `appType`= \"move\"";
-				}
+					if($_GET['para'] == "AppUnSign"){
+						$OPT = " WHERE `appStatus`=0";
+					}
+					if($_GET['para'] == "AppUnComp"){
+						$OPT = " WHERE `appStatus`<3";
+					}
+					//if($_GET['para'] == "AllApp"){
+					//	$OPT = " WHERE ";
+					//}
+				
 		   }
 		   if(isset($_GET['key'])){
 				if($_GET['key'] != null ){
@@ -116,7 +48,7 @@
 						
 					$OPT .= "`appName` like \"%".$_GET['key']."%\"";
 					$OPT .= "or `INStockID` like \"%".$_GET['key']."%\"";
-					$OPT .= "or `wpID` like \"%".$_GET['key']."%\"";
+					//$OPT .= "or `wpID` like \"%".$_GET['key']."%\"";
 					$OPT .= "or `appMaitou` like \"%".$_GET['key']."%\"";
 				}
 		   }
@@ -139,7 +71,7 @@
 	   				else {
 	   					$OPT .= " AND "	;
 	   				}
-	   				$OPT .= " `appComplete` = 0 ";
+	   				$OPT .= " `appStatus` < 3 ";
 		   		}
 		   }
 	   
@@ -148,94 +80,63 @@
 		   $query .= $OPT;
 		   $query .= " ORDER BY `appBookingDate` DESC";
 		   //getActual Count first
-		   $rawCount = getTableLengthByQuery($query);
-		   //$query .=" LIMIT ".$startPage.",".$pagesize;
+		   $itemCount = getTableLengthByQuery($query);
+		   $pageCount=ceil($itemCount/$pagesize); //页数
+		   $query .=" LIMIT ".$startPage.",".$pagesize;
 	   
 	   //echo $query;
 	   if ($result = mysqli_query($connection, $query)) {
 				?>
-		<table class="table table-condensed table-hover" style="font-size:85%;" count="<?php echo $rawCount; ?>" >
+		<table class="table table-condensed table-hover" style="font-size:85%;" count="<?php echo $itemCount; ?>" >
 			<thead>
-				<?php 
-					//var_dump($_GET['filterDetail']);
-					if( isset($_GET['filterDetail']) ){
-						if( $_GET['filterDetail'] == "true" ){
-							echo "
-							<th>app名</th>
-							<th>类型</th>
-							<th>数量</th>
-							<th>app时间</th>
-							<th>操作</th>
-							<th>编码</th>
-							<th>操作员</th>
-							<th>所属托盘</th>
-							";
-						}
-						if( $_GET['filterDetail'] == "false" ) {
-							echo "
-							<th>ID</th>
-							<th>货包</th>
-							<th>app名</th>
-							<th>类型</th>
-							<th>数量</th>
-							<th>app时间</th>
-							<th>完成</th>
-							
-							<th>操作</th>
-							<th>编码</th>
-							<th>唛头</th>
-							<th>送货人信息</th>
-							<th>特殊要求</th>
-							<th>操作员</th>
-							<th>所属托盘</th>
-							<th>所属货架</th>
-							<th>打印</th>";
-						}
-						
-						
-					}
-				?>
+				<td>状态</td>
+				<th class="col-md-2">进仓编号</th>
+				<th class="col-md-1">送货单位</th>
+				<th class="col-md-1">货名</th>
+				<th class="col-md-1">数量</th>
+				<th class="col-md-1">app时间</th>
 				
-
+				<th>操作员</th>
+				<th>操作</th>
+				<th>所属托盘</th>
 			</thead>
 			<tbody>
 				<?php
-					while($row = mysqli_fetch_array($result)){
-						echo "<tr ";
-						if ($row["appSignned"] != 1)
-							echo "style=\"background-color:#EFEFCA\" ";
-						if ($row["appComplete"] == 1)
-							echo "style=\"background-color:#EFEFEF\" ";
-						echo " >";
-						if( $_GET['filterDetail']=="false") echo "<td>".$row['appID']."</td>";
-						if( $_GET['filterDetail']=="false") echo "<td>".$row['wpID']."</td>";
+					while($row = mysqli_fetch_array($result)){ //0未签署,1签署进仓未完成,2进仓完成,3入库单完成，4出库完成
+						echo "<tr>";
+						if ($row["appStatus"] == 0) //未签署
+							echo "<td>等签署</td>";//"class=\"warning\" ";
+						else if ( ($row["appStatus"] == 1) || ($row["appStatus"] == 2)) //已签署进仓未完成
+							echo "<td>入库中</td>";//"class=\"danger\" ";
+						else if ($row["appStatus"] == 3 ) //已完成入库
+							echo "<td>完成</td>";//"class=\"success\" ";
+						else if ($row["appStatus"] == 4 ) //已完成入库
+							echo "<td class=\"info\">已出库</td>";//"class=\"success\" ";
+						else
+							echo "<td></td>";
+						//进仓编号
+						echo "<td >".$row['InStockID']."</td>";
+						//送货单位
+						echo "<td>".$row['deliverComp']."</td>";
+						//货品名
 						echo "<td>".$row['appName']."</td>";
-						if($row['appType'] == "in"){
-							echo "<td><span class=\"glyphicon glyphicon-import\" style=\"color:DarkOliveGreen \"></span></td>";
-						}
-						else if($row['appType'] == "out"){
-							echo "<td><span class=\"glyphicon glyphicon-export\" style=\"color:DeepSkyBlue \"></span></td>";
-						}
-						else{
-							echo "<td>---</td>";
-						}
 						//数量
-						echo "<td>".$row['appCount']."</td>";
+						echo "<td>".$row['appPreCount']."</td>";
+
 						//时间
-						echo "<td>".$row['appBookingDate']."</td>";
-						//echo "<td>".$row['appOperator']."</td>";
-						
+						echo "<td>".explode(" ",$row['appBookingDate'])[0]."</td>";
 						
 						//库单完成状态
+						/*
 						if( $_GET['filterDetail']=="false")
-							if($row['appComplete']==1)
-								echo "<td>".$row['appComplete']."</td>";
+							if($row['appStatus']==3)
+								echo "<td>完成</td>";
 								//echo "<td><span class=\"glyphicon glyphicon-check\" style=\"color:green\"></span></td>";
 							else
 								echo "<td><span class=\"glyphicon glyphicon-unchecked\" style=\"color:grey\"></span></td>";
+						*/
 						
-						
-						if($row['appSignned'] == 0)
+						if($row['appStatus'] == 0)
 							echo "<td><a id=\"".$row['appID']."\" data-toggle=\"modal\" data-target=\"#appSignedModal\"  class=\"btn btn-xs btn-success btn-signedApp\">签发</a>";
 						else
 							echo "<td><span style=\"width:42px\" class=\"glyphicon glyphicon-check\" style=\"color:green\"></span>";
@@ -243,35 +144,97 @@
 						//修改按钮glyphicon-edit
 						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelBtn btn btn-primary btn-xs\" > <span class=\"glyphicon glyphicon-edit\" style=\"color:white\"></span></a>";
 						echo "<a id=\"".$row['appID']."\" href=\"#appOpPanel\" class=\"appOpPanelDetail btn btn-warning btn-xs\" > <span class=\"glyphicon glyphicon-zoom-in\" style=\"color:white\"></span></a>";
+						echo "<a href=\"#\" appId = \"".$row['appID']."\" class=\"btn btn-success btn-xs ws-print\" > <span class=\"glyphicon glyphicon-print\" ></span></a>";
+						if($row['appStatus'] == 2)
+						echo "<a href=\"#\" appId = \"".$row['appID']."\" class=\"btn btn-success btn-xs ws-fullComplete\" > <span class=\"glyphicon glyphicon-ok\" ></span></a>";
+							
 						echo "</td>";
 
-						//编码
-						echo "<td>".$row['InStockID']."</td>";
+						
+						//操作员
+						echo "<td>".$users[$row['OpInput']]["wuName"]."</td>";
+						//货盘
+						echo "<td><a key=\"".$row['appID']."\" class=\"getTrays btn btn-primary btn-xs\">点击获取</a></td>";
 						//唛头
+						/*
 						if( $_GET['filterDetail']=="false")echo "<td>".$row['appMaitou']."</td>";
 						//送货人信息
 						if( $_GET['filterDetail']=="false")echo "<td>".$row['deliverComp']."/".$row['deliverTruckID']."/".$row['deliverDriver']."/".$row['deliverMobile']."</td>";
 						//特殊要求
-						if( $_GET['filterDetail']=="false")echo "<td>".$row['extraInfo']."</td>";
-						//特殊要求
-						echo "<td>".$row['appOperator']."</td>";
-						//货盘
-						echo "<td><a key=\"".$row['appID']."\" class=\"getTrays btn btn-primary btn-xs\">点击获取</a></td>";
+						if( $_GET['filterDetail']=="false")echo "<td>---</td>";
+						
 						//货架
 						if( $_GET['filterDetail']=="false")echo "<td>点击获取</td>";
 						//打印
-						if( $_GET['filterDetail']=="false")echo "<td>点击打印</td>";
-
+						if( $_GET['filterDetail']=="false")echo "<td><a class=\"appOpPrint btn\" appID=\"".$row['appID']."\" >打印</a></td>";
+						*/
 
 						echo "</tr>";
 					}
-				}
-			//}
+				}// if isset(Page)
+			}//
 			?>
 				
 			</tbody>
 		</table>
+		<nav>
+		  <ul class="pagination" style="display: table;width: auto;margin-left: auto;margin-right: auto" >
+		    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+		    <li class="active"><a href="#">1 </a></li>
+		    <li ><a href="#">2 <span class="sr-only"></span></a></li>
+		    <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+		  </ul>
+		</nav>
 		<script>
+			//打印库单
+			//开启新窗口，穿过appID appID作为参数
+			$('.appOpPrint').on("click",function(data){
+				var appID = $(this).attr('appID');
+				var url = "printable.php";//options.url + ( ( options.url.indexOf('?') < 0 && options.data != "" ) ? '?' : '&' ) + options.data;
+		    var thePopup = window.open( "printable.php?appID="+appID, "_blank", "menubar=0,location=0,height=595,width=842,resizeable=no",true);
+				var thePopup = window.open( "printable.php?appID="+appID, "_blank", "menubar=0,location=0,height=595,width=842,resizeable=no",true);
+
+			});
+
+			$(document).ready(function(){
+				//getpage完成后
+				var pageCount = <?php echo $pageCount; ?>; //目前符合项
+				var currentPage = appFilter.page;
+				//每次重新获取pagination
+				var liStr = "<li><a href=\"#\" aria-label=\"Previous\"><span aria-hidden=\"true\">&laquo;</span></a></li>"
+				for(var i = 1; i <pageCount+1; i++){
+					liStr += "<li><a href=\"#\">"+i+"</a></li>";
+				}
+				liStr += "<li><a href=\"#\" aria-label=\"Next\"><span aria-hidden=\"true\">»</span></a></li>";
+				
+				$(".pagination").html(liStr);
+				//每次刷新disable 和active
+				if(currentPage == 1){
+					$(".pagination li:first").addClass("disabled");
+					$(".pagination li:eq(1)").addClass("active");
+				}
+				else if(currentPage < pageCount){
+					$(".pagination li:eq("+currentPage+")").addClass("active");
+				}
+				else if(currentPage == pageCount){
+					$(".pagination li:last").addClass("disabled");
+					$(".pagination li:eq("+pageCount+")").addClass("active");
+				}
+
+
+				//跳转代码
+				$(".pagination a").click(function(){
+					//如果是内容aria-label Preview或Next跳转前页或后页
+
+					//否则直接获取
+					appFilter.page = $(this).html();
+					ReloadAppTxt();
+					//
+				});
+			});
+			//appFilter.page =2;
+			//console.log("getPage内打印---"+appFilter.printInfo());
+
 			//js代码是为了获取库单部分准备的
 			//执行：签署操作
 			//执行：修改操作
@@ -281,10 +244,8 @@
 				$('#modalSign').load("component.php?appID="+$(this).attr('id')+"&&userName="+userName);
 				//addAgentMemo("signed");
 				//签发按钮
-				$('#signedBtn').click(function(){
-					//显示提示
-					//var hint = "<div class=\"alert alert-success\" id=\"hintAlert\"><a href=\"#\" class=\"alert-link\">成功签发</a></div>";
-					//$('#appListHeader').append(hint);
+				$('#signedBtn').unbind("click").click(function(){
+					console.log("签发"+$('#appSignedUl').attr('key'));
 					
 					//增加备忘 actUserID,actType,(actTime),InStockID,actContent
 					var actUserID = userID;
@@ -294,40 +255,48 @@
 					var actContent = userName+"签署了入库编号"+InStockID+"的"+type+"操作";
 					var actTime = "";
 					var query = "_insertAct.php?actUserID="+actUserID+"&&actType="+actType+"&&InStockID="+InStockID+"&&actContent="+actContent+"&&actTime=";
-					$.post( query,function(data){
-						console.log(actContent+"的备忘已添加");
-					});
+					
+					//$.post( query,function(data){
+					//	addRemind("库单签署",actContent,5000,"bs-callout-info");
+					//});
+					$.ajax({ 
+	          type : "post", 
+	          url :  query, 
+	          async : false, 
+	          success : function(data){ 
+	          	console.log("post"+query+"|||||data"+data);
+	            addRemind("库单签署",actContent,5000,"bs-callout-info");
+
+	          } 
+          }); 
 					
 					//签署动作，修改app签署属性 ;component.php + sign 是签署
 					//原来是打印至hintAlert 改为屏幕提示
-					
-					$.post("component.php?sign="+$('#appSignedUl').attr('key'),function(data) {
-						addRemind("库单签署",data,5000,"bs-callout-info");
-					});
+					$.ajax({ 
+	          type : "post", 
+	          url :  "component.php?sign="+$('#appSignedUl').attr('key'), 
+	          async : false, 
+	          success : function(data){ 
+	          	addRemind("库单记录添加",data,5000,"bs-callout-info");
+	          } 
+	        });
+	        ReloadAppTxt();
+					//$.post("component.php?sign="+$('#appSignedUl').attr('key'),function(data) {
+					//	addRemind("库单记录添加",data,5000,"bs-callout-info");
+
+					//});
 					
 					//$('#hintAlert').load("component.php?sign="+$('#appSignedUl').attr('key'),function(){
 					//	ReloadAppTxt();
 					//});
 					//关闭弹出框
 					$('#appSignedModal').modal('hide');
-					//刷新库单
+					
+					
 					
 				});
 			});
-			/*增加备忘
-			function addAgentMemo(type){
-				console.log("签发备忘");
-				console.log($('#appKey').attr('key'));
-				var query = "?actUserID=";//+userID+"&&actType="+type+"Agent"+"&&actTime=--&&actContent="+memo;
-					console.log("_insertAct.php"+query);
-					/*
-					$.post( "_insertAct.php"+query,function(data){
-						//console.log(data);
-						outputHint("修改货代结果",data,3000);
-					});
-				//此处增加备忘
-				//需要userID，actType actTime,#inStockID,#trayID,#trayID,#slotID,actContent
-			}*/		
+			
 
 			addEditBtnEvent();
 			//修改库单响应
@@ -335,41 +304,49 @@
 			function addEditBtnEvent(){
 				
 				//修改库单响应
+				
 				$('.appOpPanelBtn').click(function(){
 					//修改对应数据
-					$.post("_search.php?table=wApplications&&attr=appID&&val="+$(this).attr('id'),function(data){
-						//console.log(data);
+					
+					$.post("_search.php?table=wAppIn&&attr=appID&&val="+$(this).attr('id'),function(data){
+						console.log(data);
 						var obj = jQuery.parseJSON(data);
 						$('#createNewApp').html("修改"+obj[0].appID+"号货单");
-						$('#appName').val(obj[0].appName);
-						$('#InStockID').val(obj[0].InStockID);
-						$('#appMaitou').val(obj[0].appMaitou);
-						$('#appCount').val(obj[0].appCount);
-						$('#formappID').val(obj[0].appID);
-						$.post("_search.php?table=warePackages&&attr=wpID&&val="+obj[0].wpID,function(data){
-							var obj = jQuery.parseJSON(data);
-							//console.log(obj[0].wpAgentID);
-							$('.selectpicker').val(obj[0].wpAgentID);
-							//$('.selectpicker').selectpicker('val',obj[0].wpAgentID);
+
+						//修改对应
+						$("#AppEditModalForm #appSeries").val(obj[0].appSeries);
+						//货代
+						$('#AppEditModalForm #InStockID').val(obj[0].InStockID);
+						$('#AppEditModalForm #appName').val(obj[0].appName);
+						$('#AppEditModalForm #appPreCount').val(obj[0].appPreCount);
+						$("#AppEditModalForm #appBookingDate").val(obj[0].appBookingDate);
+
+						$("#AppEditModalForm #deliverComp").val(obj[0].deliverComp);
+						$("#AppEditModalForm #deliverDriver").val(obj[0].deliverDriver);
+						$("#AppEditModalForm #deliverMobile").val(obj[0].deliverMobile);
+						$("#AppEditModalForm #deliverTruckID").val(obj[0].deliverTruckID);
+						$("#AppEditModalForm #deliverReceipt").val(obj[0].deliverReceipt);
+
+						var options = {
+							"backdrop":true,
+							"keyboard":true,
+							"show":true
+						}
+						$("#AppEditInBlock").modal(options);
+						$('#AppEditInBlock').unbind("hidden.bs.modal").on('hidden.bs.modal', function (e) {
+						  // do something...
+						  console.log("modal 重新增加关闭事件");
 						});
-
-						//修改ui生成出库
-						$('#generateOutAppBtn').removeAttr("disabled");
-						$('#generateOutAppBtn').removeClass("btn-default");
-						$('#generateOutAppBtn').addClass("btn-primary");
-						editAppShow();
-
-						//页面跳转 ref
-						jumpPage("#appOpPanel","#navEditAppBtn");
 					});
-				});
 
+				});
+				
 
 				$('.appOpPanelDetail').on("click",function(){
 					console.log("查找货单"+$(this).attr('id'));
 					//库单id= $(this).attr('id')
 					//显示详细情况div = #appDetailBox
-					//console.log( "appDetail.php?appID="+ $(this).attr('id') );
+					console.log( "appDetail.php?appID="+ $(this).attr('id') );
 					$('#appDetailBox').load("appDetail.php?appID="+$(this).attr('id'));
 					jumpPage("#appDetailBox","#navViewAppBtn");
 				});
@@ -380,7 +357,39 @@
 					$($('#trayBox')).show();
 					$("#trayBox").load("trays.php?trayKey="+$(this).attr("key"));
 				});
+
+				$(".ws-print").on("click",function(){
+					console.log($(this).attr("appId"));
+					showModelDialog("_print_appin.php?appID="+$(this).attr("appId"),210,299);
+
+					// showModelDialog("_print.php?appId="+$(this).attr("appId"),210,299)
+
+				});
+
+				
+				$(".ws-fullComplete").on("click",function(){
+					console.log($(this).attr("appId"));
+					$.get("coreFunction.php",
+						{FullCompleteAppIn:$(this).attr("appId")},
+						function(data){
+						addRemind("库单检查后完成",data,5000,"bs-callout-info");
+						//alert(data);
+					});
+				});
+
 			}
+
+			function showModelDialog(page,width,height){
+				  console.log(width + height);
+				  var obj = new Object();
+          obj.name="51js";
+			    window.showModalDialog(page,obj,"dialogWidth=1090px;dialogHeight=794px");
+			    //if(re==1){
+			    //    window.location.reload();
+			    //}
+			}
+
+
 	</script>
 	<?php 
 		}

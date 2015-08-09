@@ -238,18 +238,7 @@
 		 echo "<br>".'[we have a problem]: '.mysqli_error($connection);
 		}
 	}
-	/*删除选定的货物包
-	function deleteWarePackages($data){
-		echo "cal function deleteWarePackages";
-		global $connection;
-		$query = "DELETE FROM `warePackages` ";
-		$query .= " WHERE `wpID`=\"".$data["wpID"]."\";";
-		echo $query;
-		$result = mysqli_query($connection,$query);
-		if(!$result){
-		 echo "<br>".'[we have a problem]: '.mysqli_error($connection);
-		}
-	}*/	
+
 	//获得通过page货物包
 	function getWarePackagebyPage($page = 1){
 		global $connection;
@@ -485,21 +474,55 @@
 		if(!$result){
 		 $errorMsg .= '[we have a problem]: '.mysqli_error($connection);
 		}
-		/*if(mysqli_data_seek($result,0)){
-			echo "执行";
+	}
+
+	//获取人员列表
+	function getUser(){
+		global $connection;
+		global $errorMsg;
+		$query ="SELECT * FROM `wUsers`";
+		
+		$users = array();
+		if ($result = mysqli_query($connection, $query)) {
+			while($row = mysqli_fetch_array($result)){
+				//array_push($users,$row);
+				$users[$row['userID']] = $row;
+			}
+			return $users;
 		}
-		else
-			echo "失败";
-			*/
+		else{
+			$errorMsg .= '[we have a problem]: '.mysqli_error($connection);
+			return null;
+		}
+		/*
+		$result = mysqli_query($connection,$query);
+		if(!$result){
+		 $errorMsg .= '[we have a problem]: '.mysqli_error($connection);
+		}
+
+		$users = array();
+		if ($result = mysqli_query($connection, $query)) {
+			
+			while($row = mysqli_fetch_array($result)){
+				array_push($stack,$row[$IDname]." ".$row[$Name]);
+			}
+		return $stack;
+		*/
 	}
 	
 	function curPageURL() {
 	 $pageURL = 'http';
-	 if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-	 $pageURL .= "://";
-	 if ($_SERVER["SERVER_PORT"] != "80") {
-	  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-	 } else {
+	 if(isset($_SERVER["HTTPS"])){
+		 if ($_SERVER["HTTPS"] == "on") 
+		 	{$pageURL .= "s";}
+
+		 $pageURL .= "://";
+		 if ($_SERVER["SERVER_PORT"] != "80") {
+		  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		 }
+	 } 
+	 else {
+	 	$pageURL .= "://";
 	  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	 }
 	 return $pageURL;

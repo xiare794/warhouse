@@ -51,4 +51,38 @@
 		echo json_encode($List);
 	}
 
+
+	//纯query
+	if(isset($_GET['query'])){
+		$List = array();
+		$query = $_GET['query'];
+		if ($result = mysqli_query($connection, $query)) {
+			while($row = mysqli_fetch_array($result)){
+				array_push($List,$row);
+			}
+		}
+		else{
+			 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		echo json_encode($List);
+	}
+
+	//纯query
+	if(isset($_GET['insert'])){
+		$query = $_GET['insert'];
+		if ($result = mysqli_query($connection, $query)) {
+			if($result=="1"){
+				echo "成功添加";
+			}
+			else{
+				echo "添加失败";
+			}
+
+		}
+		else{
+			 echo '[we have a problem]: '.mysqli_error($connection);
+		}
+		
+	}
+
 ?>

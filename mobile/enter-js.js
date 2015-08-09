@@ -29,6 +29,7 @@ function refreshScan(e){
 	//如果在fillTrayDialog页面
 	for(var i = 0; i<rfids.length; i++){
 		//托盘页
+		//扫描动作在托盘页,具体货单页，绑定托盘页，查找托盘页以外
 		if($.mobile.activePage[0].id == "fillTrayDialog"){
 			$.post("phpSearch.php?table=wTrays&&attr=rfid&&val="+rfids[i],function(data){
 					var obj = jQuery.parseJSON(data);
@@ -46,33 +47,73 @@ function refreshScan(e){
 					}
 			});
 		}
-		if($.mobile.activePage[0].id == "theapp"){
+		else if($.mobile.activePage[0].id == "theapp"){
 			var hint="";
 			$.post("phpSearch.php?table=wTrays&&attr=rfid&&val="+rfids[i],function(data){
 					var obj = jQuery.parseJSON(data);
-					_app.currentTray = obj[0];
-					hint += "托盘#"+_app.currentTray.wtID+"<br>";
-					if(_app.currentTray.wtAppID==""){
-						hint += "可用";
+					if(obj.length>0){
+						_app.currentTray = obj[0];
+						hint += "托盘#"+_app.currentTray.wtID+"<br>";
+						if(_app.currentTray.wtAppID==""){
+							hint += "可用";
+						}
+						else{
+							hint += "已被"+_app.currentTray.wtAppID+"使用";
+							_app.currentTray = null;
+						}
+						$('#theapphint').html(hint);	
 					}
-					else{
-						hint += "已被"+_app.currentTray.wtAppID+"使用";
-						_app.currentTray = null;
-					}
-					$('#theapphint').html(hint);	
 			});
 		}
 		//进入托盘与RFID码绑定页面的响应
-		if($.mobile.activePage[0].id == "bindTrayPage"){
+		else if($.mobile.activePage[0].id == "bindTrayPage"){
 			$('#DialogRfid').val(rfids[i]);
 			$(".pleaseScan").html("扫描到一张rfid卡");
 			$('#DialogRfidHint').html("");
 		}
 		//如果是扫描托盘界面
-		if($.mobile.activePage[0].id == "scanTraysPage"){
+		else if($.mobile.activePage[0].id == "scanTraysPage"){
 			//alert(rfids[i]);
-			onceScaned(rfids[i]);
+			onceScaned([i]);
 			
+		}
+		else{
+			//alert(rfids[i]);
+			/*
+			$.ajax({ 
+        type : "post", 
+        url : "phpSearch.php?table=wTrays&&attr=rfid&&val="+rfids[i],
+        async : false, 
+        success : function(data){
+        	obj = jQuery.parseJSON(data);
+        	if(obj.length>0)
+        	{
+        		//找到托盘
+        		alert("托盘"+obj[0].rfid+"入库单"+obj[0].wtAppID+"出库单"+obj[0].wtAppOutID);
+        	}
+        	else{
+
+        		alert("未找到存在托盘");
+        		
+        		var query = "INSERT INTO `wtrays`(`rfid`, `twStatus` `UpdateTime`) VALUES ("+rfids[i]+" ,空闲 ,"+getFormatTime()+" )";
+        		$.ajax({ 
+			        type : "post", 
+			        url : "phpSearch.php?insert="+query,
+			        async : false, 
+			        success : function(data){
+			        	alert("成功添加新托盘"+rfids[i]);
+			        }
+			      });
+
+        	}
+
+
+        }
+        
+      });
+			*/
+      //alert(theString);
+			//alert(rfid[i]);
 		}
 	}
 	
@@ -147,7 +188,7 @@ function onceScaned(rfid){
 			
 				//console.log($.isNumeric(obj[0].wtAppID));
 				if($.isNumeric(obj[0].wtAppID)){
-					$.post("phpSearch.php?table=wApplications&&attr=appID&&val="+obj[0].wtAppID,function(dataapp){
+					$.post("phpSearch.php?table=wAppIn&&attr=appID&&val="+obj[0].wtAppID,function(dataapp){
 						var objApp = jQuery.parseJSON(dataapp);
 						console.log(objApp[0]);
 						output += "<li class=\"trayli\" data=\""+obj[0].rfid+"\">";
@@ -217,57 +258,83 @@ function onceScaned(rfid){
 表单列表页的函数
 */
 function getApps(start,step,allApp,timeReverse,detail){
-	//console.log(_app);
+	console.log(_app);
 	if(typeof(start)==='undefined') start = _app.filter.loadListStart;
 	if(typeof(step)==='undefined') step = _app.filter.loadListStep;
 	if(typeof(allApp)==='undefined') allApp = _app.filter.allApp;
 	if(typeof(timeReverse)==='undefined') timeReverse = _app.filter.timeDescend;
 	if(typeof(detail)==='undefined') detail = _app.filter.detail;
 		
-		//console.log("getData init");
-		//var url = "getAppList.php?start="+start+"&&step="+step+"&&Assigned="+allApp+"&&timeDescend="+timeReverse+"&&detail="+detail+"&&appType="+_app.filter.appType+"&&onlyUnCom="+_app.filter.onlyUnComplete;
-		var url = "phpSearch.php?table=wApplications&&attr=appComplete&&val=0";
-		var apps;
+		console.log("getData init");
+		var url = "phpSearch.php?query=SELECT * FROM `wAppIn` WHERE `appStatus` = 1 ";
+		console.log("获取未完成入库单");
+		console.log(url);
+		var appsIn;
 		$.ajax({ 
       type : "post", 
       url : url,
       async : false, 
       success : function(data){
       	//console.log(data);
-      	console.log("ajax获取app列表");
-      	apps = jQuery.parseJSON(data);
-      	//console.log(url);
-      	//console.log(apps);
+      	appsIn = jQuery.parseJSON(data);
+      	console.log(appsIn);
       }
     });
 
+		
+
 		var input = "<li>入库</li>";//<ul data-role=\"listview\" >";
 		var output = "<li>出库</li>";//<ul data-role=\"listview\" >";
-		
-		$.each(apps, function(i, item) {
-			if(apps[i].appType == "in"){
-				input += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+apps[i].wpID+"\" appID=\""+apps[i].appID+"\">";
-				input += getSizedText(apps[i].appName,8,90);
-				input += getSizedText(apps[i].InStockID,7,70);
+		console.log("目前正常");
+		console.log("长度"+appsIn.length);
+		$.each(appsIn, function(i, item) {
+				input += "<li><a class=\"appListItem\" href=\"#theapp\"  appID=\""+item.appID+"\">";
+				input += getSizedText(item.appName,8,90);
+				input += getSizedText(item.InStockID,7,70);
 				input += "入&nbsp;";
-				input += getSizedText(apps[i].appCount+"件",5,25) ;
+				input += getSizedText(item.appPreCount+"件",5,25) ;
 				input += "</a></li>";
-			}
-			else if(apps[i].appType == "out"){
-				output += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+apps[i].wpID+"\" appID=\""+apps[i].appID+"\">";
-				output += getSizedText(apps[i].appName,8,90);
-				output += getSizedText(apps[i].InStockID,7,70);
-				output += "库&nbsp;";
-				output += getSizedText(apps[i].appCount+"件",5,25);
+		});
+		
+		//获取签署过的出库列表
+		var url = "phpSearch.php?query=SELECT app.wAppID,app.agentID, app.appStatus, c.wCSeries, c.wCType, c.wCTiDan FROM `wAppOut` app, `wContainers` c WHERE `appStatus` =1 AND c.wCID = app.containerID";
+		console.log("获取未完成出库单");
+		console.log(url);
+    var appsOut;
+		$.ajax({ 
+      type : "post", 
+      url : url,
+      async : false, 
+      success : function(data){
+      	//console.log(data);
+      	appsOut = jQuery.parseJSON(data);
+      	console.log(appsOut);
+      }
+    });
+
+		$.each(appsOut, function(i, item) {
+				output += "<li><a class=\"appOutListItem\" href=\"#theapp\"  appID=\""+item.wAppID+"\">";
+				output += getSizedText("代理商:"+item.agentID,8,90);
+				output += getSizedText("提单号"+item.wCTiDan,20,200);
+				output += "&nbsp;";
+				output += getSizedText(item.appStatus+"件",5,25) ;
 				output += "</a></li>";
-			}
 				
 		});
+
 		//output += "</ul>";
 		$('#appInContent').html(input);
 		$('#appInContent').listview("refresh");
+		//$("#appInContent li").on("click",function(){
+		//	_app.currentApp.appType = "in";
+		//	console.log("单据为入库单");
+		//});
 		$('#appOutContent').html(output);
 		$('#appOutContent').listview("refresh");
+		//$("#appInContent li").on("click",function(){
+			//_app.currentApp.appType = "out";
+			//console.log("单据为出库单");
+		//});
 		addAppListListen();
 
 }
@@ -292,6 +359,8 @@ function getFormatApps(start,step,allApp,timeReverse,detail){
 		var output="";
 		//detail模式
 		if(detail == false){
+
+
 			 $.each(obj, function(i, item) {
 				output += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+obj[i].wpID+"\" appID=\""+obj[i].appID+"\">";
 				output += "<p>";
@@ -310,11 +379,13 @@ function getFormatApps(start,step,allApp,timeReverse,detail){
 			});
 		 }
 		 else{
+		 	/*
 			$.each(obj, function(i, item) {
 				output += "<li><a class=\"appListItem\" href=\"#theapp\" data=\""+obj[i].wpID+"\" ><h3>包号:"+obj[i].wpID+"----货品名称:"+obj[i].appName;
 				output +=  "<strong>----操作类型"+obj[i].appType+"</strong></h3><h3>操作人:"+obj[i].appOperator+"-----麦头:"+obj[i].appMaitou+"-----货物量:"+obj[i].appCount+"</h3></a>";
 				output += "</li>";
-			}); 
+			});
+			*/ 
 		 }
 		//增加到尾部
 		$("#appContent").append(output);
@@ -349,198 +420,566 @@ function refreshPage(page){
 */
 //给page #theapp的格式化
 function getFormatAppPage(idx){
+	//把这个当做入库的function
 //根据appid显示app页面
-	$.post("getAppList.php?idx="+idx,function(data){
-		//console.log("$.post(getAppList.php?idx="+idx);
-		var obj = jQuery.parseJSON(data);
-		//显示上半部分内容
-		var output = "";
-		output += "<ul data-role=\"listview\" id=\"appPageUL\">";
-		
-		output += "<li><p>"+getSizedText("货物包 "+obj[0].wpID,8,60)+" | ";
-		output += getSizedText("名称 "+obj[0].appName,10,100)+" | ";
-		output += getSizedText("麦头 "+obj[0].appMaitou,10,100)+"</p></li>";
-		output += "<li><p>"+getSizedText("更新时间 "+obj[0].appBookingDate,24,179)+" | ";
-		output += getSizedText("装载 "+obj[0].appCount,10,100)+"</p></li>";
-		output += "<li class=\"ui-field-contain\" data-role=\"list-divider\">托盘列表 </li>";
-		output += "</ul>";
-		$('#theappContent').html(output);
-
-		//对dialogForm复制
-		$('#dialogAppID').val(obj[0].appID);
-		var totalCount = obj[0].appCount;
-		var onTrayCount = 0;
-		var onTruckCount = 0;
-		
-	//Search Trays 查询对应属于App的托盘
-		//按表单类型分别
-		var attrStr = "&&attr=wtAppID&&val="+obj[0].appID;
-		if(obj[0].appType == "out"){
-			attrStr = "&&attr=wtAppoutID&&val="+obj[0].appID;
-		}
-		$.post("phpSearch.php?table=wTrays"+attrStr,function(data){
+	console.log("getFormatAppPage"+idx+" type:"+_app.currentApp.appType);
+	var type = _app.currentApp.appType;
+	console.log(type);
+	if(type == "in"){
+		$.post("getAppList.php?type=in&&idx="+idx,function(data){
+			console.log("$.post(getAppList.php?type=in&&idx="+idx+")");
 			var obj = jQuery.parseJSON(data);
-			//console.log(obj);
-			//全部托盘都在货架上的状态量 状态量保持真则可以完成入库
-			var StatusAllShelf = true;
-			//全部托盘都在叉车(使用中的)的状态量 状态量保持真则可以完成出库
-			var StatusAllTruck = true;
+			console.log(obj);
+			//显示上半部分内容
+			var output = "";//<p>入库时增加托盘的响应未正确响应。。。怀疑是android手持机web bug，求改</p>"";
+			output += "<ul data-role=\"listview\" id=\"appPageUL\">";
 			
-			var output ="";
-			for(var i=0; i<obj.length; i++){
-				output += "<li><a href=\"#fillTrayDialog\" class=\"trayLink\" data=\""+obj[i].rfid+"\" count=\""+obj[i].twWareCount+"\" style=\"padding:5px 40px;\">";
+			output += "<li><p>";
+			output += getSizedText("名称 "+obj[0].appName,10,100)+" | ";
+			output += getSizedText("麦头 "+obj[0].appMaitou,10,100)+"</p></li>";
+			output += "<li><p>"+getSizedText("更新时间 "+obj[0].appBookingDate,24,179)+" | ";
+			output += getSizedText("预入数量 "+obj[0].appPreCount,10,100)+"</p></li>";
+			output += "<li class=\"ui-field-contain\" data-role=\"list-divider\">托盘列表 </li>";
+			output += "</ul>";
+			$('#theappContent').html(output);
+
+			//对dialogForm复制
+			//$('#dialogAppID').val(obj[0].appID);
+			var totalCount = obj[0].appPreCount;
+			var onTrayCount = 0;
+			var onTruckCount = 0;
+			
+			//Search Trays 查询对应属于App的托盘
+			//按表单类型分别
+			var attrStr = "&&attr=wtAppID&&val="+obj[0].appID;
+			$.post("phpSearch.php?table=wTrays"+attrStr,function(data){
+				var obj = jQuery.parseJSON(data);
+				//全部托盘都在货架上的状态量 状态量保持真则可以完成入库
+				var StatusAllShelf = true;
+				//全部托盘都在叉车(使用中的)的状态量 状态量保持真则可以完成出库
+				var StatusAllTruck = true;
 				
-				//console.log("这是在哪？");
-				//console.log(_app.currentApp.appType);
-				//console.log(_app.currentApp.appType == "in");
-				//console.log(data);
-				
-				if(obj[i].twStatus == "仓库内" || obj[i].twStatus == "仓库外"){
-					output += "<img src=\"resource/inUse.png\" alt=\"使用中\" class=\"ui-li-icon ui-corner-none\">";
-					onTruckCount += parseInt(obj[i].twWareCount);
-					if(StatusAllShelf)
-						StatusAllShelf = false;
-					if(StatusAllTruck)
-						StatusAllTruck = false;
+				var output ="";
+				for(var i=0; i<obj.length; i++){
+					output += "<li><a href=\"#fillTrayDialog\" class=\"trayLink\" data=\""+obj[i].rfid+"\" count=\""+obj[i].twWareCount+"\" style=\"padding:5px 40px;\">";
+
+					if(obj[i].twStatus == "仓库内" || obj[i].twStatus == "仓库外"){
+						output += "<img src=\"resource/inUse.png\" alt=\"使用中\" class=\"ui-li-icon ui-corner-none\">";
+						onTruckCount += parseInt(obj[i].twWareCount);
+						if(StatusAllShelf)
+							StatusAllShelf = false;
+						if(StatusAllTruck)
+							StatusAllTruck = false;
+					}
+					if(obj[i].twStatus == "货架"){
+						output += "<img src=\"resource/inSlot.png\" alt=\"货架\" class=\"ui-li-icon ui-corner-none\">";
+						if(StatusAllTruck)
+							StatusAllTruck = false;
+					}
+					output += "<p class=\"status-otw\">";
+					output += getSizedText("托盘"+obj[i].wtID,8,70)+getSizedText(obj[i].UpdateTime.split(' ')[0]+"|"+obj[i].UpdateTime.split(' ')[1],19,120);
+					output += getSizedText(obj[i].twStatus,10,70)
+					output += "</p>";
+					
+					$.ajax({ 
+	          type : "post", 
+	          url : "phpSearch.php?table=wUnit&&attr=trayID&&val="+obj[i].wtID,
+	          async : false, 
+	          success : function(data){
+	          	console.log(data);
+	          	var units = jQuery.parseJSON(data); 
+	            console.log("got"+units);
+	            for(var j=0; j<units.length; j++){
+	            	output += "<p>";
+								output += getSizedText("单品 "+units[j].count+"箱",10,70);
+								output += getSizedText("尺寸:"+units[j].width+"x"+units[j].length+"x"+units[j].height+"cm ",20,120);
+								output += getSizedText("重量"+units[j].count+"kg",10,50);
+								output += "</p>";
+
+	            }
+	          } 
+	        }); 
+
+					output += "</a></li>";
+					console.log("post sequence");
+
+					onTrayCount　+= parseInt(obj[i].twWareCount);
 				}
-				if(obj[i].twStatus == "货架"){
-					output += "<img src=\"resource/inSlot.png\" alt=\"货架\" class=\"ui-li-icon ui-corner-none\">";
-					if(StatusAllTruck)
-						StatusAllTruck = false;
+
+				console.log("判断出入库");
+				console.log(_app.currentApp.appType="in");
+				if(_app.currentApp.appType == "in"){
+					$('#theapp h1').html("入库单:"+_app.currentApp.appID);
+					output += "<li><p>"+getSizedText("货物装载："+onTrayCount+"/"+totalCount+"箱",20,160);
+					output += getSizedText("完成度："+100*(onTrayCount/totalCount).toFixed(3)+"%",12,120)+"</p></li>";
+					
+					//激活下方按钮
+					$('#addNewTrayForApp').show();
+					//console.log("来一发");
+					//console.log($('#theapphint'));
+					$('#addNewTrayForApp').unbind().on('click',function(){
+						if(!_app.currentTray){
+							$('#theapphint').html("请先扫描空托盘");
+
+							//新添加临时扫描托盘项
+							var tempScan = "<select id=\"tempScan\">";
+							$.ajax({ 
+						    type : "post", 
+						    url : "phpSearch.php?query=SELECT * FROM wTrays WHERE `twStatus`='空闲'",
+						    async : false, 
+						    success : function(data){
+						    	var trays = jQuery.parseJSON(data);
+						    	for(var i=0; i<trays.length; i++){
+						    		tempScan +="<option data=\""+trays[i].wtID+"\">"+trays[i].rfid+"</option>";
+						    		console.log("托盘rfid"+trays[i].rfid);
+						    	}
+						    	tempScan += "</select>";
+							    $("#theapphint").html("扫描托盘或点选一个可用托盘"+tempScan);
+							    $("#tempScan").on("blur",function(){
+							    	//_app.currentTray.rfid = $(this).html();
+							    	console.log($("#tempScan option:selected").attr("data"));
+							    	$.getJSON('phpSearch.php?table=wTrays&&attr=wtID&&val='+$("#tempScan option:selected").attr("data"),function(data){
+							    			_app.currentTray=data[0];
+							    			console.log(_app.currentTray);
+							    	});
+							    });
+
+						  	}
+							});
+						}
+
+						else{
+							$('#theapphint').html("增加托盘"+_app.currentTray.rfid);
+							$.mobile.navigate("#fillTrayDialog");
+						}
+					});
+
+					//$('.addNewTray').removeClass("ui-state-disabled");
+					//$('.inComeBtn').removeClass("ui-state-disabled");
 				}
-				output += "<p class=\"status-otw\">";
-				output += getSizedText("托盘"+obj[i].wtID,8,70)+getSizedText(obj[i].UpdateTime.split(' ')[0]+"|"+obj[i].UpdateTime.split(' ')[1],19,80);
-				output += "</p>";
+				if(_app.currentApp.appType == "out"){
+					$('#theapp h1').html("出库单:"+_app.currentApp.appID);
+					output += "<li><p style=\"lightBlue\">"+onTrayCount+"箱货物等待卸货</p></li>";
+					
+					//激活下方按钮
+					$('#addNewTrayForApp').hide();
+					//$('#inComeBtn').addClass("ui-state-disabled");
+				}
+				//console.log(onTrayCount);
+				//表头
+				//console.log(obj[0].appType);
 				
-				$.ajax({ 
-          type : "post", 
-          url : "phpSearch.php?table=wareUnit&&attr=trayID&&val="+obj[i].wtID,
-          async : false, 
-          success : function(data){
-          	var units = jQuery.parseJSON(data); 
-            console.log("got"+units);
-            for(var j=0; j<units.length; j++){
-            	output += "<p>";
-							output += getSizedText("单品 "+units[j].count+"箱",10,70);
-							output += getSizedText("尺寸:"+units[j].width+"x"+units[j].length+"x"+units[j].height+"cm ",20,120);
-							output += getSizedText("重量"+units[j].count+"kg",10,50);
-							output += "</p>";
-
-            }
-          } 
-        }); 
-
-				output += "</a></li>";
-				console.log("post sequence");
-
-				onTrayCount　+= parseInt(obj[i].twWareCount);
-			}
-			if(_app.currentApp.appType == "in"){
-				$('#theapp h1').html("入库单:"+_app.currentApp.appID);
-				output += "<li><p>"+getSizedText("货物装载："+onTrayCount+"/"+totalCount+"箱",20,160);
-				output += getSizedText("完成度："+100*(onTrayCount/totalCount).toFixed(3)+"%",12,120)+"</p></li>";
+				$(output).appendTo('#appPageUL');
 				
-				//激活下方按钮
-				$('#addNewTrayForApp').show();
-				$('#addNewTrayForApp').unbind().on('click',function(){
-					if(!_app.currentTray){
-						$('#theapphint').html("请先扫描空托盘");
+
+				$("#appCompleteBtn").unbind("click").click(function(){
+					console.log("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
+					//$('body').animate({ scrollTop: $("#theapphint").offset() });
+					$('#theapphint').html("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
+					
+					var compQuery = "";
+					var compCondition = 0;
+					//完成入库动作
+					if(_app.currentApp.appType == "in"){
+						if((totalCount == onTrayCount)&&(StatusAllShelf)){
+							compQuery = "phpUpdate.php?table=wAppIn&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appStatus&&tValue=3";
+							compCondition = 1;
+						}
+						else{
+							$('#theapphint').html("货物数量:"+totalCount+"<br>托盘内数量:"+onTrayCount+"<br>不匹配完成条件:<br>入库需要所有托盘入货架，货物齐备<br>出库需要托盘解除绑定");
+							compCondition = 0;
+						}
+					}
+					/*else if(_app.currentApp.appType == "out"){
+						if((0 == onTrayCount)&&(StatusAllTruck)){
+							compQuery = "phpUpdate.php?table=wAppOut&&idAttr=wAppID&&idValue="+_app.appSelected+"&&tAttr=appStatus&&tValue=3";
+							compCondition = 1;
+						}
+						else{
+							$('#theapphint').html("货物数量:"+totalCount+"<br>托盘内数量:"+onTrayCount+"<br>不匹配完成条件:<br>入库需要所有托盘入货架，货物齐备<br>出库需要托盘解除绑定");
+							compCondition = 0;
+						}
+
+					}*/
+					else{
+						$('#theapphint').html( "参数不对，任务完成失败");
+						compCondition = 0;
+					}
+
+					if(compCondition == 1){
+						$.post(compQuery,function(data){
+							if(data == "1"){
+								$('#theapphint').html( "此任务<br>已经完成");
+								//完成入任务
+								var memo ={actUserID:userID,actType:"finAppIn",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的入库"};
+								addMemo(memo);
+							}
+							else{
+								$('#theapphint').html( "此任务完成失败");
+							}
+						});
+					}
+					//完成任务动作	 
+					/*if( (totalCount == onTrayCount)&&(StatusAllShelf)&&(_app.currentApp.appType == "in") ){
+						$('#theapphint').html( $('#theapphint').html() + "<br>正在进行完成任务");
+						
+						//if(_app.currentApp.wAppID)
+						$.post("phpUpdate.php?table=wAppIn&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appComplete&&tValue=1",function(data){
+							console.log(data);
+							if(data == "1"){
+								$('#theapphint').html( "此任务<br>已经完成");
+								//完成入任务
+								var memo ={actUserID:userID,actType:"finAppIn",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的入库"};
+								addMemo(memo);
+							}
+							else{
+								$('#theapphint').html( "此任务完成失败");
+							}
+						});
+					}
+					else if( (0 == onTrayCount)&&(StatusAllTruck)&&(_app.currentApp.appType == "out") ){
+						$('#theapphint').html( $('#theapphint').html() + "<br>正在进行出库任务"+"<br>需要完整代码enter-js.js 425line");
+						$.post("phpUpdate.php?table=wAppIn&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appComplete&&tValue=1",function(data){
+							if(data == "1"){
+								$('#theapphint').html( "此任务<br>已经完成");
+								//完成任务
+								var memo ={actUserID:userID,actType:"finAppOut",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的出库"};
+								addMemo(memo);
+							}
+							else{
+								$('#theapphint').html( "此任务完成失败");
+							}
+						});
 					}
 					else{
-						$('#theapphint').html("增加托盘"+_app.currentTray.rfid);
-						$.mobile.navigate("#fillTrayDialog");
-					}
+						$('#theapphint').html("货物数量:"+totalCount+"<br>托盘内数量:"+onTrayCount+"<br>不匹配完成条件:<br>入库需要所有托盘入货架，货物齐备<br>出库需要托盘解除绑定");
+					}*/
+					$(window).scrollTop($("#theapphint").offset());
 				});
 
-				//$('.addNewTray').removeClass("ui-state-disabled");
-				//$('.inComeBtn').removeClass("ui-state-disabled");
-			}
-			if(_app.currentApp.appType == "out"){
-				$('#theapp h1').html("出库单:"+_app.currentApp.appID);
-				output += "<li><p style=\"lightBlue\">"+onTrayCount+"箱货物等待卸货</p></li>";
+				$("#theappContent").trigger("create");
+				$('.footer').trigger('create'); 
 				
-				//激活下方按钮
-				$('#addNewTrayForApp').hide();
-				//$('#inComeBtn').addClass("ui-state-disabled");
-			}
-			//console.log(onTrayCount);
-			//表头
-			//console.log(obj[0].appType);
+				/*修改某一个托盘 这部分代码只负责传递数据　不负责显示　显示在pageshow*/
+				addListenerToTrayLink();
 			
-			$(output).appendTo('#appPageUL');
-			
-
-			$("#appCompleteBtn").click(function(){
-				console.log("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
-				//$('body').animate({ scrollTop: $("#theapphint").offset() });
-				$('#theapphint').html("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
 				
-				//完成任务动作	 
-				if( (totalCount == onTrayCount)&&(StatusAllShelf)&&(_app.currentApp.appType == "in") ){
-					$('#theapphint').html( $('#theapphint').html() + "<br>正在进行完成任务");
-					$.post("phpUpdate.php?table=wApplications&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appComplete&&tValue=1",function(data){
-						if(data == "1"){
-							$('#theapphint').html( "此任务<br>已经完成");
-							//完成入任务
-							var memo ={actUserID:userID,actType:"finAppIn",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的入库"};
-							addMemo(memo);
-						}
-						else{
-							$('#theapphint').html( "此任务完成失败");
-						}
-					});
-				}
-				else if( (0 == onTrayCount)&&(StatusAllTruck)&&(_app.currentApp.appType == "out") ){
-					$('#theapphint').html( $('#theapphint').html() + "<br>正在进行出库任务"+"<br>需要完整代码enter-js.js 425line");
-					$.post("phpUpdate.php?table=wApplications&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appComplete&&tValue=1",function(data){
-						if(data == "1"){
-							$('#theapphint').html( "此任务<br>已经完成");
-							//完成任务
-							var memo ={actUserID:userID,actType:"finAppOut",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的出库"};
-							addMemo(memo);
-						}
-						else{
-							$('#theapphint').html( "此任务完成失败");
-						}
-					});
-				}
-				else{
-					$('#theapphint').html("货物数量:"+totalCount+"<br>托盘内数量:"+onTrayCount+"<br>不匹配完成条件:<br>入库需要所有托盘入货架，货物齐备<br>出库需要托盘解除绑定");
-				}
-				$(window).scrollTop($("#theapphint").offset());
 			});
+		//Search Trays End
+				
+				
 
-			$("#theappContent").trigger("create");
-			$('.footer').trigger('create'); 
 			
-			/*修改某一个托盘 这部分代码只负责传递数据　不负责显示　显示在pageshow*/
-			addListenerToTrayLink();
+			$('#dialogInStockID').val(obj[0].InStockID);
+			
+			//查询对应wTrays确定仓位信息
+			
 		
 			
 		});
-	//Search Trays End
-			
+	}
+	else{
+		getFormatAppOutPage(idx);
+	}
+}
+function getFormatAppOutPage(idx){
+	var traysPack;
+	var trays;
+	var totalCount = 0;
+	var onTrayCount = 0;
+	var onTruckCount = 0;
+	var StatusAllShelf = true;
+	var StatusAllTruck = true;
+	//查找并显示出库单
+	console.log("查找并显示出库单");
+	$.ajax({
+		type : "GET", 
+    url : "phpSearch.php?query=SELECT * FROM `wAppOut` o, `wContainers` c, `wAgents` a WHERE o.wAppID="+idx+" AND o.containerID = c.wCID AND a.waID = o.agentID",
+    async : false,
+    success : function(data){
+    	//console.log(data);
+    	appOut = jQuery.parseJSON(data)[0];
+    	console.log(appOut);
+    }
+  });
+	var output = "";
+	output += "<ul data-role=\"listview\" id=\"appPageUL\">";
+	output += "<li><p>";
+	if(appOut.Type == "1")
+		output += "装箱出库|"
+	output += getSizedText("箱型 "+appOut.wCType,15,130)+" | ";
+	output += getSizedText("提单号 "+appOut.wCTiDan,30,200)+" </p></li>";
+
+	output += "<li><p>";
+	output += getSizedText("箱号 "+appOut.wCSeries,20,170)+" | ";
+	output += "</p></li></ul>";
+	$('#theappContent').html(output);
+	$('#theapp h1').html(appOut.waName+"@出库");
+	
+	// *********** 打印简要出库配货单
+	$.ajax({
+		type : "GET", 
+    url : "phpSearch.php?query=SELECT tray.*, i.*, count(i.appID) FROM `wAppOut` o, `wTrays` tray, `wAppIn` i WHERE o.wAppID="+idx+" AND tray.wtAppOutID = o.wAppID AND tray.wtAppID = i.appID  GROUP BY i.InStockID",
+    async : false,
+    success : function(data){
+    	traysPack = jQuery.parseJSON(data);
+    }
+  });
+	console.log("啊啊啊");
+	console.debug(traysPack);
+  output = "<table data-role=\"table\" class=\"ui-responsive ui-body-d ui-shadow table-stripe\" data-mode=\"columntoggle\"   \>";
+  output += "<thead>  <tr>";
+	  output += "<th data-priority=\"5\" >作业号</th>";
+	  output += "<th data-priority=\"1\" >进仓编号</th>";
+	  output += "<th data-priority=\"3\" >送货单位</th>";
+	  output += "<th data-priority=\"3\" >货名</th>";
+	  output += "<th data-priority=\"1\" >件数</th>";
+	  output += "<th data-priority=\"1\" >托数</th>";
+	  output += "<th data-priority=\"1\" >位置</th>";
+	output += "</tr></thead>  ";
+	output += "<tbody>";
+	for(var i=0; i<traysPack.length; i++){
+		output += "<tr appInID= \""+traysPack[i]["appID"]+"\" >";
+			output += "<td>"+traysPack[i]["appSeries"]+"</td>";
+			output += "<td>"+traysPack[i]["InStockID"]+"</td>";
+			output += "<td>"+traysPack[i]["deliverComp"]+"</td>";
+			output += "<td>"+traysPack[i]["appName"]+"</td>";
+			output += "<td>"+traysPack[i]["appPreCount"]+"</td>";
+			output += "<td>"+traysPack[i]["count(i.appID)"]+"</td>";
+			var slotPos = "";
+			$.ajax({
+				type : "GET", 
+		    url : "phpSearch.php?query=SELECT tray.*, slot.tsPos FROM `wTrays` tray, `wSlots` slot WHERE slot.wSlotID=tray.wSlotID AND tray.wtAppID="+traysPack[i].appID+"  GROUP BY slot.wSlotID",
+		    async : false,
+		    success : function(data){
+		    	console.log(data);
+		    	obj = jQuery.parseJSON(data);
+		    	if(obj.length){
+			    	for (x in obj){
+			    		slotPos += obj[x];
+			    	}
+			    }
+			    else{
+			    	slotPos="已下架";
+		    	}
+		    }
+
+		  });
+			output += "<td>"+slotPos+"</td>";
+		output += "</tr>"
+
+		//函数内数据更新
+		totalCount += Number(traysPack[i].appPreCount);
+		console.log("totalCount"+totalCount);
+	}
+	output += "</tbody></table>";
+	$("#theappContent").append(output);
+	// *********** 建立托盘列表
+	output = "";
+	$.ajax({
+		type : "GET", 
+    url : "phpSearch.php?query=SELECT tray.* FROM `wAppOut` o, `wTrays` tray WHERE o.wAppID="+idx+" AND o.wAppID= tray.wtAppOutID",
+    async : false,
+    success : function(data){
+    	//console.log(data);
+    	trays = jQuery.parseJSON(data);
+    	console.log(trays);
+    }
+  });
+	output += "<ul data-role=\"listview\" style=\"margin:0px\">";
+	output += "<li>等待出库</li>"
+	for( var i =0; i<trays.length; i++){
+		output += "<li><a href=\"#fillTrayDialog\" class=\"trayLink\" data=\""+trays[i].rfid+"\" count=\""+trays[i].twWareCount+"\" style=\"padding:5px 40px;\">";
+
+		if(trays[i].twStatus == "仓库内" || trays[i].twStatus == "仓库外"){
+			output += "<img src=\"resource/inUse.png\" alt=\"使用中\" class=\"ui-li-icon ui-corner-none\">";
+			onTruckCount += parseInt(trays[i].twWareCount);
+			if(StatusAllShelf)
+				StatusAllShelf = false;
+			if(StatusAllTruck)
+				StatusAllTruck = false;
+		}
+		if(trays[i].twStatus == "货架"){
+			output += "<img src=\"resource/inSlot.png\" alt=\"货架\" class=\"ui-li-icon ui-corner-none\">";
+			if(StatusAllTruck)
+				StatusAllTruck = false;
+		}
+		output += "<p class=\"status-otw\">";
+		var date = trays[i].UpdateTime.split(" ")[0];
+		var time = trays[i].UpdateTime.split(" ")[1];
+		console.log(date.split("-")[1]);
+		var timeDisplay = date.split("-")[1] +"-"+ date.split("-")[2] +" "+ time.split(":")[0]+":"+time.split(":")[1];
+		output += getSizedText("托盘"+trays[i].wtID,8,70)+getSizedText(timeDisplay,30,110);
+		output += getSizedText("货物数量"+trays[i].twWareCount,8,80)+"   ";
+		output += getSizedText(trays[i].twStatus,10,70);
+		output += "</p>";
+		output += "</li>";
+
+		onTrayCount += Number(trays[i].twWareCount);
+	}
+	output += "</ul>"
+	$("#theappContent").append(output);
+
+	$("#appCompleteBtn").unbind("click").click(function(){
+		console.log("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
+		console.log("出库页 进行完成动作");
+		//$('body').animate({ scrollTop: $("#theapphint").offset() });
+		$('#theapphint').html("总数"+totalCount+";托盘上货物数量:"+onTrayCount+";任务类型"+_app.currentApp.appType);
+
+		//当onTrayCount=0时,可完成出库任务
+		//完成出库需要修改 trays,appIn.twStatus=4,appOut.twStatus=3, container状态，增加记录
+		var compQuery = new Array();
+		var compCondition = 1;
+		console.log("totalCount"+totalCount);
+		console.log("onTrayCount"+onTrayCount);
+
+		if(totalCount>0 && onTrayCount==0){
+			compCondition = 1;
+		}
+		else{
+			compCondition = 0;
+			console.log("出库条件不完整");
+		}
+
+		if( compCondition == 1){
+			var getQuery = "phpSearch.php?query=SELECT i.appID, o.wAppID, o.containerID, tray.wtAppID, tray.wtAppOutID FROM `wAppOut` o, `wAppIn` i, `wTrays` tray ";
+			getQuery += "WHERE tray.wtAppID=i.appID AND tray.wtAppOutID=o.wAppID AND tray.wtAppOutID="+_app.currentApp.wAppID+" GROUP BY i.InStockID";
+			$.ajax({
+				type : "GET", 
+		    url : getQuery,
+		    async : false,
+		    success : function(data){
+		    	//console.log(data);
+		    	var obj = jQuery.parseJSON(data);
+		    	//console.log(obj);
+		    	for(var i =0; i<obj.length; i++){
+		    		//修改入库单状态
+		    		compQuery.push("phpUpdate.php?table=wAppIn&&idAttr=appID&&idValue="+obj[i].appID+"&&tAttr=appStatus&&tValue=4");
+		    	}
+		    	//集装箱状态
+		    	compQuery.push("phpUpdate.php?table=wContainers&&idAttr=wCID&&idValue="+obj[0].containerID+"&&tAttr=wCStatus&&tValue=4"); 
+		    	//出库单状态
+		    	compQuery.push("phpUpdate.php?table=wAppOut&&idAttr=wAppID&&idValue="+obj[0].wAppID+"&&tAttr=appStatus&&tValue=3");
+		    	//出库单完结时间
+		    	compQuery.push("phpUpdate.php?table=wAppOut&&idAttr=wAppID&&idValue="+obj[0].wAppID+"&&tAttr=closeTime&&tValue="+getFormatTime());
+		    }
+		  });
 			
 
-		
-		$('#dialogInStockID').val(obj[0].InStockID);
-		
-		//查询对应wTrays确定仓位信息
+			var getQuery = "phpSearch.php?query=SELECT tray.wtID FROM `wAppOut` o, `wAppIn` i, `wTrays` tray ";
+			getQuery += "WHERE tray.wtAppID=i.appID AND tray.wtAppOutID=o.wAppID AND tray.wtAppOutID="+_app.currentApp.wAppID;
+			$.ajax({
+				type : "GET", 
+		    url : getQuery,
+		    async : false,
+		    success : function(data){
+		    	//console.log(data);
+		    	var obj = jQuery.parseJSON(data);
+		    	for(var i=0; i<obj.length; i++){
+		    		if(obj[i].twStatus != "仓库外" || obj[i].twWareCount != 0){
+		    			compCondition = 0;
+		    		}
+		    		compQuery.push("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+obj[0].wtID+"&&tAttr=twStatus&&tValue=空闲");
+		    		compQuery.push("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+obj[0].wtID+"&&tAttr=wtAppID&&tValue=");
+		    		compQuery.push("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+obj[0].wtID+"&&tAttr=wtAppOutID&&tValue=");
+		    		compQuery.push("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+obj[0].wtID+"&&tAttr=UpdateTime&&tValue="+getFormatTime());
+		    	}
+		    }
+		  });
+			console.log(compQuery);
+		}
+
+		console.log(_app.currentApp);
+		var updateComp = 1;
+		for(var i=0; i<compQuery.length; i++){
+			console.log("到这了么？");
+			if(updateComp == 1){
+				//console.log(i+compQuery[i]);
+				$.post(compQuery[i],function(data){
+					//console.log(data);
+					if(data == "1"){
+						$('#theapphint').html( "此任务<br>已经完成");
+						
+					}
+					else{
+						//console.log(data);
+						$('#theapphint').html( "此任务完成失败");
+						updateComp =0;
+					}
+				});
+			}
+		}
+		if(updateComp == 1){
+			//完成入任务
+			var memo ={actUserID:userID,actType:"finAppIn",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的入库"};
+			addMemo(memo);
+		}
+
+		/*
+		if((totalCount > 0)&&(onTrayCount==0)){
+			compQuery.push( "phpUpdate.php?table=wAppIn&&idAttr=appID&&idValue="+_app.appSelected+"&&tAttr=appStatus&&tValue=3");
+			compCondition = 1;
+		}
+		else{
+			$('#theapphint').html("货物数量:"+totalCount+"<br>托盘内数量:"+onTrayCount+"<br>不匹配完成条件:<br>入库需要所有托盘入货架，货物齐备<br>出库需要托盘解除绑定");
+			compCondition = 0;
+		}
 		
 	
-		
+
+		if(compCondition == 1){
+			$.post(compQuery,function(data){
+				if(data == "1"){
+					$('#theapphint').html( "此任务<br>已经完成");
+					//完成入任务
+					var memo ={actUserID:userID,actType:"finAppIn",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,actContent:userName+"完成了"+_app.currentApp.appID+"任务"+totalCount+"箱"+_app.currentApp.appName+"的入库"};
+					addMemo(memo);
+				}
+				else{
+					$('#theapphint').html( "此任务完成失败");
+				}
+			});
+		}
+
+		*/
 	});
+
+
+	// *********** 刷新格式
+	$("#theappContent").trigger("create");
+	addListenerToTrayLink();
+
+
 }
 
 function addAppListListen(){
 	$('.appListItem').unbind('click').click(function(e){
-			console.log("某个货单被点击");
+			console.log("入库货单点击");
 			_app.wpSelected = parseInt($(this).attr('data'));
 			_app.appSelected = parseInt($(this).attr('appID'));
-			$.post("phpSearch.php?table=wApplications&&attr=appID&&val="+_app.appSelected,function(data){
+
+			$.post("phpSearch.php?table=wAppIn&&attr=appID&&val="+_app.appSelected,function(data){
 					var obj = jQuery.parseJSON(data);
 					_app.currentApp = obj[0];
+					_app.currentApp.appType = "in";
+					
 				});
+			
+	});
+
+	$('.appOutListItem').unbind('click').click(function(e){
+			
+			_app.wpSelected = parseInt($(this).attr('data'));
+			_app.appSelected = parseInt($(this).attr('appID'));
+			console.log("出库货单点击"+_app.appSelected);
+			$.post("phpSearch.php?table=wAppOut&&attr=wAppID&&val="+_app.appSelected,function(data){
+					//console.log(data);
+					var obj = jQuery.parseJSON(data);
+					_app.currentApp = obj[0];
+					console.log(_app.currentApp);
+					_app.currentApp.appType = "out";
+				});
+			
 	});
 }
 
@@ -552,10 +991,13 @@ $().ready(function() {
 	console.log("开始ready");
 	
 	$('#taskWaited').html("");
+	console.log("getAppList.php?type=out&&unfinished=true");
 	$.getJSON('getAppList.php?type=out&&unfinished=true',function(data){
+		//console.log(data);
 		$('#taskWaited').append("目前等待出库任务"+data.length+"件<br>");
 	});
 	$.getJSON('getAppList.php?type=in&&unfinished=true',function(data){
+		//console.log(data);
 		$('#taskWaited').append("目前等待入库任务"+data.length+"件<br>");
 	});
 	
@@ -568,6 +1010,7 @@ $().ready(function() {
 		setTimeout('homedisplayTime()',1000);
 		$('#taskWaited').html("");
 		$.getJSON('getAppList.php?type=out&&unfinished=true',function(data){
+
 			$('#taskWaited').append("目前等待出库任务"+data.length+"件<br>");
 		});
 		$.getJSON('getAppList.php?type=in&&unfinished=true',function(data){
@@ -672,23 +1115,29 @@ $().ready(function() {
 		$('#releaseTray').unbind("click").on('click',function(){
 			//先将托盘运出仓库才能卸下货物
 			//针对wTrays的操作，先查询wtID下的Uint，托盘为空后
-			if($("#releaseTray").attr("trayEmpty") == "true"){
-				$('#bindTray2AppBtnHint').html("托盘为空，可以继续");
-				
-				$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wtAppID&&tValue=");
-				$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wtAppOutID&&tValue=");
-				$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAAttr=wpID&&tValue=");
-				$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAAttr=updateTime&&tValue="+getFormatTime());
-				$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=空闲");
-				$('#bindTray2AppBtnHint').html("托盘已和此货单解除关系");
-				updateTrayPageFunction();
-				//解除托盘绑定，需要记录托盘ID，时间，stockID，人名
-				var memo ={actUserID:userID,actType:"unbindTray",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"解除了"+_app.currentTray.wtID+"托盘和任务的关系"};
-				addMemo(memo);
+			console.log(_app.currentTray);
+			if(_app.currentTray.wtAppOutID==""){
+				if($("#releaseTray").attr("trayEmpty") == "true"){
+					$('#bindTray2AppBtnHint').html("托盘为空，可以继续");
+					
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wtAppID&&tValue=");
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wtAppOutID&&tValue=");
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAAttr=wpID&&tValue=");
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAAttr=updateTime&&tValue="+getFormatTime());
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=空闲");
+					$('#bindTray2AppBtnHint').html("托盘已和此货单解除关系");
+					updateTrayPageFunction();
+					//解除托盘绑定，需要记录托盘ID，时间，stockID，人名
+					var memo ={actUserID:userID,actType:"unbindTray",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"解除了"+_app.currentTray.wtID+"托盘和任务的关系"};
+					addMemo(memo);
 
+				}
+				else{
+					$('#bindTray2AppBtnHint').html("托盘不为空，先卸下货物");
+				}
 			}
 			else{
-				$('#bindTray2AppBtnHint').html("托盘不为空，先卸下货物");
+				$('#bindTray2AppBtnHint').html("出库时不允许解除绑定,装箱结束时一起修改绑定项");
 			}
 		});
 		//设置select范围
@@ -714,18 +1163,18 @@ $().ready(function() {
   	$('#removeUnit').unbind("click").on("click",function(data){
   		console.log("卸下一次货物，全部"+$('#unitUnloadSelect').val());
   		//先将托盘运出仓库才能卸下货物
-  		if( _app.currentTray.twStatus == "仓库外") 
-  		{
-			$.get("phpSearch.php?table=wareUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
+		if( _app.currentTray.twStatus == "仓库外") 
+		{
+			$.get("phpSearch.php?table=wUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
 				console.log(result);
 				var unit = jQuery.parseJSON(result);
 				console.log(unit);
 				
 				
-				$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
+				$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
 					//$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=wiCloseNote&&tValue=appID"+_app.currentApp.appID+"count"+_app.currentApp.appID");
 				showUnitList();
 				updateTrayPageFunction();
@@ -744,7 +1193,7 @@ $().ready(function() {
   	$('#removePartUnit').unbind("click").on("click",function(data){
   		console.log("卸下一次货物，部分");
 		if( _app.currentTray.twStatus == "仓库外"){
-  			$.get("phpSearch.php?table=wareUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
+  			$.get("phpSearch.php?table=wUnit&&attr=wiID&&val="+$('#unitUnloadSelect').val(),function(result){
 				console.log(result);
 
 				var unit = jQuery.parseJSON(result);
@@ -752,17 +1201,17 @@ $().ready(function() {
 
 				if(result > 0){
 					$('#TrayDialogFormHint4Remove').html(unit[0].wiName+"货物"+$('#UnitToRemoveNum').val()+"件被取出,剩余"+result+"件");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue="+result);
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue="+result);
 					showUnitList();
 		  		updateTrayPageFunction();
 		  		var memo ={actUserID:userID,actType:"unloadStock",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"卸下了"+_app.currentTray.wtID+"托盘中"+$('#UnitToRemoveNum').val()+"箱货物,剩余"+result+"箱"};
 					addMemo(memo);
 				}
 				else if(result==0){
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
-					$.get("phpUpdate.php?table=wareUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=appID&&tValue=");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=trayID&&tValue=");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=count&&tValue=0");
+					$.get("phpUpdate.php?table=wUnit&&idAttr=wiID&&idValue="+$('#unitUnloadSelect').val()+"&&tAttr=updateTime&&tValue="+getFormatTime());
 					showUnitList();
 					updateTrayPageFunction();
 					var memo ={actUserID:userID,actType:"unloadStock",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,actContent:userName+"卸下了"+_app.currentTray.wtID+"托盘的货物"};
@@ -847,6 +1296,7 @@ $().ready(function() {
 
 		//上架动作
 		$('#load2Shelf').unbind("click").on("click",function(){
+
 			if(_app.currentTray.twStatus == "仓库内"){
 				//如果托盘是在仓库内才能上架
 				
@@ -855,74 +1305,123 @@ $().ready(function() {
 				$("#tray2ShelfHelperNavHint").html("托盘还在仓库外，需要先运进仓库才能执行上架操作");
 				return;
 			}
-			//检查输入是否正确
-			console.log("开始上架");
-			var pos = $('#tray2ShelfHelperNavHint').html().split(':');
-			
-			if(pos.length != '2'){
-				console.log("位置不正确");
-				console.log(pos);
-				console.log(pos.length);
-			}
-			else{
-				var para = pos[1].split('-');
-				if( para.length != 4){
-					console.log("位置不正确,不够4个参数");
+
+			//如果使用旧方法 几排几列
+			if($("#flip-OldStyle-tray2S").prop("checked")){
+				//检查输入是否正确
+				console.log("开始上架");
+				var pos = $('#tray2ShelfHelperNavHint').html().split(':');
+				
+				if(pos.length != '2'){
+					console.log("位置不正确");
+					console.log(pos);
+					console.log(pos.length);
 				}
 				else{
-					var _isNum = true;
-					for(var i in para){
-						if(isNaN(parseInt(para[i],10))){
-							_isNum = false;
-							break;
-						}
+					var para = pos[1].split('-');
+					if( para.length != 4){
+						console.log("位置不正确,不够4个参数");
 					}
-					if(_isNum){
-						//参数正确，开始上架
-						var slotID = 0;
-						$.ajax({ 
-					    type : "post", 
-					    url : "phpSearch.php?table=wSlots",
-					    async : false, 
-					    success : function(data){
-					    	slots = jQuery.parseJSON(data);
-					    	for(var i in slots){
-					    		if(slots[i].tsWareHouse == para[0] && slots[i].tsPosRow == para[1] && slots[i].tsPosCol == para[2] && slots[i].tsPosFloor == para[3] ){
-						    		
-						    		//找到托盘
-						    		if(slots[i].wtID == 0){
-						    			//为空
-						    			slotID = slots[i].wSlotID;
-						    			console.log("找到合适仓位"+slots[i].wSlotID);
-						    			break;
-						    		}
-						    		else{
-						    			console("找到合适仓位，并不为空");
-						    		}
-					    		}
-					    	}
-					    }
-					  });
-						//上架按slot位置，修改slot的wtID
-						if(slotID != 0){
-								console.log("修改Slot的托盘号"+_app.currentTray.wtID);
-								if( $.get("phpUpdate.php?table=wSlots&&idAttr=wSlotID&&idValue="+slotID+"&&tAttr=wtID&&tValue="+_app.currentTray.wtID) == "0")
-									console.log("修改slot的wtID出错");
+					else{
+						var _isNum = true;
+						for(var i in para){
+							if(isNaN(parseInt(para[i],10))){
+								_isNum = false;
+								break;
+							}
 						}
-						//修改trays的状态、wSlotID updateTime
-						if(slotID != 0){
-								
-								if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wSlotID&&tValue="+slotID) == "0")
-									console.log("修改Trays的托盘位出错");
-								if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=updateTime&&tValue="+getFormatTime()) == "0")
-									console.log("修改Trays的更新时间出错");
-							  if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=货架",function(){
-							  	updateTrayPageFunction();
-							  }) == "0")
-									console.log("修改Trays的状态出错");
-								
-								
-						}
+						if(_isNum){
+							//参数正确，开始上架
+							var slotID = 0;
+							$.ajax({ 
+						    type : "post", 
+						    url : "phpSearch.php?table=wSlots",
+						    async : false, 
+						    success : function(data){
+						    	slots = jQuery.parseJSON(data);
+						    	for(var i in slots){
+						    		if(slots[i].tsWareHouse == para[0] && slots[i].tsPosRow == para[1] && slots[i].tsPosCol == para[2] && slots[i].tsPosFloor == para[3] ){
+							    		
+							    		//找到托盘
+							    		if(slots[i].wtID == 0){
+							    			//为空
+							    			slotID = slots[i].wSlotID;
+							    			console.log("找到合适仓位"+slots[i].wSlotID);
+							    			break;
+							    		}
+							    		else{
+							    			console("找到合适仓位，并不为空");
+							    		}
+						    		}
+						    	}
+						    }
+						  });
+							//上架按slot位置，修改slot的wtID
+							if(slotID != 0){
+									console.log("修改Slot的托盘号"+_app.currentTray.wtID);
+									if( $.get("phpUpdate.php?table=wSlots&&idAttr=wSlotID&&idValue="+slotID+"&&tAttr=wtID&&tValue="+_app.currentTray.wtID) == "0")
+										console.log("修改slot的wtID出错");
+							}
+							//修改trays的状态、wSlotID updateTime
+							if(slotID != 0){
+									
+									if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wSlotID&&tValue="+slotID) == "0")
+										console.log("修改Trays的托盘位出错");
+									if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=updateTime&&tValue="+getFormatTime()) == "0")
+										console.log("修改Trays的更新时间出错");
+								  if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=货架",function(){
+								  	updateTrayPageFunction();
+								  }) == "0")
+										console.log("修改Trays的状态出错");
+							}
+							$("#tray2ShelfHelperNavHint").html("托盘"+_app.currentTray.wtID+"号放入"+slotID+"仓位");
+							$('#tray2ShelfHint').html("托盘已入货架");
+							
+							//上货架
+							var memo ={actUserID:userID,actType:"trayLoad",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,slotID:slotID,actContent:userName+"操作"+_app.currentTray.wtID+"托盘上架"};
+							addMemo(memo);
+							showUnitList();
+							
+						}//参数正确，上架if 结束
+					}
+				}
+			}
+			else{
+				console.log("行不行")
+				console.log($("#slotChar").val()+$("#slotNum").val());
+				//确定仓位
+				var query = "SELECT * FROM wSlots WHERE `tsPos` = \""+$("#slotChar").val()+$("#slotNum").val()+"\"";
+				console.log(query);
+				var slotID = 0;
+				$.ajax({ 
+						    type : "post", 
+						    url : "phpSearch.php?query="+query,
+						    async : false,
+						    dataType:"json",
+						    
+						    success : function(data){
+						    	//console.log(data);
+						    	slotID = data[0]["wSlotID"];
+						    	console.log("SlotID"+slotID);
+						    }
+				});
+
+				//上架按slot位置，修改slot的wtID
+				if(slotID != 0 && slotID != undefined){
+						console.log("修改Slot的托盘号"+_app.currentTray.wtID);
+						if( $.get("phpUpdate.php?table=wSlots&&idAttr=wSlotID&&idValue="+slotID+"&&tAttr=wtID&&tValue="+_app.currentTray.wtID) == "0")
+							console.log("修改slot的wtID出错");
+				
+						
+						if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=wSlotID&&tValue="+slotID) == "0")
+							console.log("修改Trays的托盘位出错");
+						if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=updateTime&&tValue="+getFormatTime()) == "0")
+							console.log("修改Trays的更新时间出错");
+					  if( $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=货架",function(){
+					  	updateTrayPageFunction();
+					  }) == "0")
+							console.log("修改Trays的状态出错");
+				
 						$("#tray2ShelfHelperNavHint").html("托盘"+_app.currentTray.wtID+"号放入"+slotID+"仓位");
 						$('#tray2ShelfHint').html("托盘已入货架");
 						
@@ -930,8 +1429,6 @@ $().ready(function() {
 						var memo ={actUserID:userID,actType:"trayLoad",actTime:getFormatTime(),InStockID:_app.currentApp.InStockID,appID:_app.currentApp.appID,trayID:_app.currentTray.wtID,slotID:slotID,actContent:userName+"操作"+_app.currentTray.wtID+"托盘上架"};
 						addMemo(memo);
 						showUnitList();
-						
-					}//参数正确，上架if 结束
 				}
 			}
 		});//上架动作结束
@@ -940,9 +1437,9 @@ $().ready(function() {
 		$("#unload4Shelf").unbind("click").on('click',function(){
 			//查询此托盘对应app是否为未完成
 			//补丁
-			var phpSearch = "phpSearch.php?table=wApplications&&attr=appID&&val="+_app.currentTray.wtAppID;
+			var phpSearch = "phpSearch.php?table=wAppIn&&attr=appID&&val="+_app.currentTray.wtAppID;
 			if(_app.currentApp.appType == "out")
-				phpSearch = "phpSearch.php?table=wApplications&&attr=appID&&val="+_app.currentTray.wtAppOutID;
+				phpSearch = "phpSearch.php?table=wAppOut&&attr=wAppID&&val="+_app.currentTray.wtAppOutID;
 			//如果未完成，下架动作不成功
 			$.ajax({ 
 		    type : "post", 
@@ -1018,7 +1515,7 @@ $().ready(function() {
 				}
       }
 		});
-
+	
 		//对托盘添加货物的动作
 		$("#addUnit2Item").unbind("click").on("click",function(){
 				//给隐藏项赋值
@@ -1038,12 +1535,37 @@ $().ready(function() {
 					addMemo(memo);
 				}
 				else{
-					console.log(data);
+					//console.log(data);
 					$('#TrayDialogFormHint4add').html("增加货物失败"+data);
 				}
 				showUnitList();
 			});
 		});		
+
+		//临时 过门控制
+		$("#passDoorTemp").unbind("click").on('click',function(){
+				console.log(_app.currentTray);
+				if(_app.currentTray.twStatus == "仓库外"){
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=仓库内",
+		    		function(data){
+		    			//console.log(data);
+		    			_app.currentTray.twStatus="仓库内";
+		    		}
+		    	);
+				}
+				else if(_app.currentTray.twStatus == "仓库内"){
+					$.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+_app.currentTray.wtID+"&&tAttr=twStatus&&tValue=仓库外",
+		    		function(data){
+		    			//console.log(data);
+		    			_app.currentTray.twStatus="仓库外";
+		    		}
+		    	);
+				}
+				else{
+					alert("托盘状态超出范围");
+				}
+		});
+
 	});
 
 	
@@ -1198,8 +1720,16 @@ function addListenerToTrayLink(){
 			$.post("phpSearch.php?table=wTrays&&attr=rfid&&val="+_app.editTrayRfid,function(data){
 				var obj = jQuery.parseJSON(data);
 				_app.currentTray = obj[0];
-				console.log("点击的托盘在于哪个AppID下");
-				console.log(_app);
+
+				//如果是出库托盘，获取其入库托盘的入库编号
+				if(!_app.currentTray.InStockID){
+					$.post("phpSearch.php?query=SELECT appIn.InStockID FROM `wAppIn` appIn, `wTrays` t WHERE t.wtAppID=appIn.appID",function(data){
+						var obj = jQuery.parseJSON(data);
+						_app.currentTray.InStockID = obj[0].InStockID;
+						console.log("给出库托盘获取入库编号"+_app.currentTray.InStockID);
+					});
+				}
+				
 			});
 			
 	});	
@@ -1424,7 +1954,7 @@ function loadGraph(){
 		  //吞吐量
 		  var inPlot = [];
 		  var outPlot = [];
-		  $.post("getAppList.php?all=1",function(data){
+		  $.post("getAppList.php?type=in",function(data){
 			 var obj = jQuery.parseJSON(data);
 			 //console.log(obj); 
 			 
@@ -1464,6 +1994,8 @@ function goback() {
 
 
 function getSizedText(txt,size,width){
+	if(!txt)
+		return;
 	var output = "<span style=\"width:"+width+"px; display:inline-block;\" >"
 	if(isInt(size)){
 		if(size>=txt.length){
@@ -1491,9 +2023,10 @@ function showUnitList(){
 	if(_app.currentTray){
 		$.ajax({ 
 	    type : "post", 
-	    url : "phpSearch.php?table=wareUnit&&attr=trayID&&val="+_app.currentTray.wtID,
+	    url : "phpSearch.php?table=wUnit&&attr=trayID&&val="+_app.currentTray.wtID,
 	    async : false, 
 	    success : function(data){
+	    	console.log(data);
 	    	out += getSizedText("[商品:数量]:",10,90);
 				out += getSizedText("尺寸:(cm)",20,120);
 				out += getSizedText("重量:(kg)",10,90);
@@ -1536,6 +2069,7 @@ function showUnitList(){
   }
   $('#fillTrayPage_unitList').html(out);
   //$("#fillTrayPage_lv").listview("refresh");
+  console.log('function showUnitList 结束');
 }
 
 function updateTrayPageFunction(){
@@ -1608,7 +2142,7 @@ function updateTrayPageFunction(){
 			//获取选项				
 			$.ajax({ 
 		    type : "post", 
-		    url : "phpSearch.php?table=wareUnit&&attr=trayID&&val="+_app.currentTray.wtID,
+		    url : "phpSearch.php?table=wUnit&&attr=trayID&&val="+_app.currentTray.wtID,
 		    async : false, 
 		    success : function(data){
 		    	var units = jQuery.parseJSON(data);

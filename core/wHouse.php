@@ -12,8 +12,52 @@
 	</head>
 	<body class="container">
 		<!-- agent container -->
+			<ul class="nav nav-tabs" role="tablist" id="HouseNavTab">
+			  <li role="presentation"><a href="#houseContainer">老仓库显示</a></li>
+			  <li role="presentation" class="active"><a href="#tongzhou1">仓库显示</a></li>
+			</ul>
 			<div id="houseBody" >
-				<div class="panel panel-default col-lg-12 col-md-12 " id="houseContainer">仓库
+				<div class=" col-lg-12 col-md-12" id="houseContainer" >旧仓库显示
+				</div>
+				<div class="panel panel-default col-lg-12 col-md-12 " id="tongzhou1" >
+					<!--<div class="panel-headding">
+							<h6>一号库情况</h6>
+						</div>
+						<div class="panel-body">
+							<p>testtesttesttesttest</p>
+						</div>-->
+						<table class="table" id="wareHouseDisplay">
+			        <thead>
+			          <tr>
+			            <th>#</th>
+			            <th>First Name</th>
+			            <th>Last Name</th>
+			            <th>Username</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			          <tr>
+			            <td>1</td>
+			            <td>Mark</td>
+			            <td>Otto</td>
+			            <td>@mdo</td>
+			          </tr>
+			          <tr>
+			            <td>2</td>
+			            <td>Jacob</td>
+			            <td>Thornton</td>
+			            <td>@fat</td>
+			          </tr>
+			          <tr>
+			            <td>3</td>
+			            <td>Larry</td>
+			            <td>the Bird</td>
+			            <td>@twitter</td>
+			          </tr>
+			        </tbody>
+			      </table>
+							<!--<button id="autoGenerateHouse">产生仓库位置</button>-->
+					
 				</div>
 			</div>
 
@@ -26,6 +70,185 @@
   <script src="dist/js/bootstrap.min.js"></script> -->
 	
   <script>
+  	//产生tsPos 临时用
+  	$("#autoGenerateHouse").on("click",function(){
+  		var query ="query=SELECT *,max(wSlotID),min(wSlotID) FROM wSlots";
+  		var ss = 0;
+  		var se = 0;
+  		$.ajax({
+		    type : "post", 
+		    url : "_search.php?"+query,
+		    async : false, 
+		    success : function(data){
+		    	var obj = jQuery.parseJSON(data);
+		    	ss = obj[0]["min(wSlotID)"];
+		    	se = obj[0]["max(wSlotID)"];
+		    }
+	    });
+
+  		var pos = new Array();
+  		var ch = new Array("A","B","C");
+  		for(var i=0; i<3; i++){
+  			for(var j = 1; j<26; j++){
+  				pos.push(ch[i]+j);
+  			}
+  		}
+  		console.log(pos.length);
+
+  		console.log(se-ss);
+  		var idx = 0;
+  		for(var i = ss; i<se; i++){
+				$.get("phpUpdate.php?table=wSlots&&idAttr=wSlotID&&idValue="+i+"&&tAttr=tsPos&&tValue="+pos[idx]);
+				idx++;	
+  		}
+
+  	});
+
+
+  	$("#HouseNavTab a").on("click",function(){
+  		$("#HouseNavTab li").removeClass("active");
+  		$(this).parent().addClass("active");
+  		
+  		var target = $(this).attr("href").substring(1);
+  		$("#houseContainer").css("display","none");
+  		$("#tongzhou1").css("display","none");
+  		$($(this).attr("href")).css("display","");
+
+  		console.log("到这了");
+  		console.log($(this).attr("href"));
+  		if($(this).attr("href")=="#tongzhou1"){
+  			//显示
+  			getWareHouseDisplay();
+  			
+
+  		}
+  	});
+
+  	function getWareHouseDisplay(){
+  		var html = "<thead><tr><th colspan=\"2\">A排</td><th colspan=\"2\">B排</td><th colspan=\"2\">C排</td></tr></thead>";
+  		for(var i=1; i<26; i++){
+  			html+= "<tr ><td id=\"A"+i+"\">A"+i+"</td>";
+  			html+= "<td id=\"A"+(i+1)+"\">A"+(i+1)+"</td>";
+
+  			html+= "<td id=\"B"+i+"\">B"+i+"</td>";
+  			html+= "<td id=\"B"+(i+1)+"\">B"+(i+1)+"</td>";
+
+  			html+= "<td id=\"C"+i+"\">C"+i+"</td>";
+  			html+= "<td id=\"C"+(i+1)+"\">C"+(i+1)+"</td>";
+  			html+= "</tr>";
+  			i++;
+  		}
+  		$("#wareHouseDisplay").html(html);
+
+  		var query ="query=SELECT * FROM wSlots";
+  		$.ajax({
+		    type : "post", 
+		    url : "_search.php?"+query,
+		    async : false, 
+		    success : function(data){
+		    	var slots = jQuery.parseJSON(data);
+
+		    	var trays;
+	    		var appIns; 
+	    		var query = "query=SELECT * FROM wTrays";
+	    		$.ajax({ 
+				    type : "post", 
+				    url : "_search.php?"+query,
+				    async : false,
+				    dataType:"json",
+				    success : function(data){
+				    	trays = data;
+				    }
+				  });
+				  query = "query=SELECT * FROM wAppIn";
+				  $.ajax({ 
+				    type : "post", 
+				    url : "_search.php?"+query,
+				    async : false,
+				    dataType:"json",
+				    success : function(data){
+				    	appIns = data;
+				    }
+				  });
+	    		
+	    		//console.log(trays);
+	    		//console.log(appIns);
+
+		    	for(var i in trays){
+		    		if(trays[i]["twStatus"]=="货架"){
+		    			console.log("herehre");
+		    			var slotID = trays[i]["wSlotID"];
+		    			//console.log(trays[i]);
+		    			for(var j in slots){
+		    				if(slots[j]["wSlotID"]== slotID){
+		    					//console.log(slots[j]['tsPos']);
+		    					//console.log( $("#wareHouseDisplay #"+slots[j]['tsPos'])) ;
+		    					var appIn;
+		    					var query = "SELECT * FROM wAppIn WHERE appID= "+ trays[i]["wtAppID"];
+		    					$.ajax({ 
+								    type : "post", 
+								    url : "_search.php?query="+query,
+								    async : false,
+								    dataType:"json",
+								    success : function(data){
+								    	appIn = data[0];
+								    }
+								  });
+								  console.log(appIn);
+								  var tips = "进仓编号:"+appIn["InStockID"]+"<br/>";
+					  			tips += "货物:"+appIn["appName"]+"<br/>";
+					  			tips += "数量:"+trays[i]["twWareCount"];
+
+		    					var span = "<span class=\"glyphicon glyphicon-list\" style=\"color:DarkSeaGreen\" data-toggle=\"tooltip\"  data-original-title=\""+tips+"\" ></span>";
+		    					$("#wareHouseDisplay #"+slots[j]['tsPos']).append(span);
+
+		    					break;
+		    				}
+		    			}
+		    		}
+		    	}
+
+
+	    		var options={
+						animation:true,
+						trigger:'hover',
+						html:true //触发tooltip的事件
+					}
+				  $('#wareHouseDisplay span').tooltip(options);
+				  /*
+				  $('#wareHouseDisplay span').on("mouseover",function(){
+				  		//console.log( $(this).attr("appID"));
+				  		var query = "SELECT * FROM wAppIn WHERE appID= "+ $(this).attr("appID");
+				  		//console.log(query);
+				  		var tSpan = $(this);
+				  		$.getJSON("_search.php?query="+query, function(data){
+				  			console.log(data);
+				  			console.log("打印自己");
+				  			console.log(tSpan);
+				  			var tips = "进仓编号:"+data[0]["InStockID"]+"<br/>";
+				  			tips += "货物:"+data[0]["appName"]+"<br/>";
+				  			tips += "数量:"+$(this).attr("count");
+				  			console.log($(this).attr("data-original-title"));
+				  			tSpan.attr("data-original-title",tips);
+				  			tSpan.unbind();
+				  			console.log(data);
+				  		});
+				  });*/
+		    		//console.log(obj[i]['tsPos']);
+		    		
+		    		/*
+		    		var query = "query=SELECT t.wtID, t.twStatus t.wtAppID, t.wSlotID FROM wTrays t, wAppIn in WHERE "
+		    		$.getJSON("_search.php?"+query, function(data){
+
+						  console.log(data);
+
+						});*/
+		    	
+		    }
+	    });
+	    return html;
+  	}
+
   	//s计算天数
   	function calculateDays(date){
   		var day = date.split(" ")[0].split("-");
@@ -52,7 +275,7 @@
 				//var head = new Array("编码","表单","仓库位置","数量","规格","操作时间");
 				var attr = new Array("wSlotID","tsWareHouse","tsPosRow","tsPosCol","tsPosFloor","wtID");
 				var obj = jQuery.parseJSON(data);
-				console.log(obj);
+				//console.log(obj);
 				
 				
 				//var link = "wSlotID";
@@ -65,7 +288,7 @@
 				for(var item in obj){
 				//	wareVox [item['tsPosRow']][item['tsPosCol']][item['tsPosFloor']];
 				}
-				console.log(wareVox);
+				//console.log(wareVox);
 				
 				$('#houseContainer').html( FormPanelTable(obj,attr,"","","仓库列表"));
 				
@@ -92,13 +315,13 @@
 	    		
 	    		
 	    		//item.html(obj[i]["tsPosRow"]+"-"+obj[i]["tsPosCol"]+"-"+obj[i]["tsPosFloor"]);
-	    		console.log(item);
+	    		//console.log(item);
 	    	}
 	    }
 	  });
 		
 	  //查找所有仓位和托盘对的上好的位置
-	  var query  ="SELECT * FROM wSlots s, wTrays t, wareUnit u ";
+	  var query  ="SELECT * FROM wSlots s, wTrays t, wUnit u ";
 	  query 		+="WHERE s.wtID = t.wtID AND u.trayID=t.wtID ";
 	  $.ajax({ 
 	    type : "post", 
@@ -107,7 +330,7 @@
 	    success : function(data){
 	    	//console.log(data);
 				var obj = jQuery.parseJSON(data);
-				console.log(obj);
+				//console.log(obj);
 				for(var i in obj){
 					//console.log("计算天"+calculateDays(obj[i]["updateTime"]));
 					var item = $("#houseContainer td[row="+obj[i]["tsPosRow"]+"][floor="+obj[i]["tsPosFloor"]+"][col="+obj[i]["tsPosCol"]+"][house="+obj[i]["tsWareHouse"]+"]");
@@ -132,7 +355,7 @@
 		//生成表格形式 返回字符串
 		function FormPanelTable(obj,attr,head,link,title){
 			//console.log(obj);
-			console.log(obj[0]);
+			//console.log(obj[0]);
 			console.log(mxRow + " " +mxCol + " " +mxFloor );
 			var output = "<div class=\"panel-heading\" \>"+title+"</div>";
 			output 	+= "<div class=\"panel-body\">";

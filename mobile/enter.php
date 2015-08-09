@@ -103,7 +103,10 @@
                     <li data-theme="c"><a href="#appListPage" class="ui-icon-cloud"><h2>任务</h2></a></li>
                     <li><a href="#scanTraysPage" class="ui-icon-cloud"><h2>查找</h2></a></li>
                     <li><a href="#trayListPage" id="getTrayListBtn" class="ui-icon-minus"><h2>绑定</h2></a></li>       
-                    <li><a href="#InfoPage"><h2>库状态</h2></a></li>
+                    <li><a href="#InfoPage"><h2>库状态</h2></a></li>       
+                    <li><a href="#shortCut"><h2>快捷</h2></a></li>
+
+                    
                 </ul>
             </div>
         </div>
@@ -185,6 +188,21 @@
             货物提示
         </div>
         <div data-role="content" id="theappContent">	
+            <table data-role="table" class="ui-responsive ui-body-d ui-shadow table-stripe" data-mode="columntoggle" id="my-table">
+                <thead>
+                    <tr>
+                        <th data-priority="1" >data-priority="1"</th>
+                        <th data-priority="2" >data-priority="2"</th>
+                        <th data-priority="3" >data-priority="3"</th>
+                        <th data-priority="4" >data-priority="4"</th>
+                        <th data-priority="5" >data-priority="5"</th>
+                    </tr>
+                <thead>
+                <tbody>
+                    <tr> <td>Say Somthing</td><td>Okay, bit Boring</td><td>save that </td><td>figure it please</td></tr>
+                </tbody>
+
+            </table>
                 
         </div>
         
@@ -219,6 +237,21 @@
         </div>
         <div data-role="footer" data-position="fixed">
             <h4>Footer</h4>
+        </div>
+    </div>
+
+    <!-- 托盘绑定页 -->
+    <div data-role="page" id="shortCut">
+        <div data-role="header">
+            <h1>快捷动作(临时)</h1>
+        </div>
+        <div data-role="content" id="shortCutContent" > 
+            <a data-role="button" data-theme="d" id="addNewTrays" data-inline="true" >增加临时托盘</a>   
+            <a data-role="button" data-theme="d" id="randonRFID" data-inline="true" >使得TESTRFIDCODE托盘随机rfid</a>   
+        
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>下导航</h4>
         </div>
     </div>
     
@@ -386,12 +419,55 @@
             <div data-role="navbar" >
                 <div data-role="collapsible" data-mini="true" id="trayShelfNav">
                     <h4>上下货架</h4>
+                    <div id="tray2ShelfHelperNavHint"></div>
                     <div style="font-size:1em">
                         <div id="tray2ShelfHint"></div>
-                        <div data-role="collapsible" data-mini="true" id="tray2ShelfHelperNav">
+                        <div data-role="collapsible" data-mini="true" id="tray2ShelfHelperNavNew">
                             <h4>货架选择</h4>
                             <div style="font-size:0.8em">
+                                <div id="tsPosHint"></div>
+                                <form>
+                                    <select id="slotChar">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                    <select id="slotNum">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                        <option value="24">24</option>
+                                        <option value="25">25</option>
+                                        <option value="26">26</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                        <div data-role="collapsible" data-mini="true" id="tray2ShelfHelperNav">
+                            <h4>货架选择旧</h4>
+                            <div style="font-size:0.8em">
                                 <div id="tray2ShelfHelperNavHint"></div>
+                                <input type="checkbox" data-role="flipswitch" name="flip-checkbox-1" id="flip-OldStyle-tray2S">
                                 <form>
                                     <select id="slotHouse">
                                         <option value="default">default</option>
@@ -413,6 +489,8 @@
                     </div>
                 </div>
             </div><!--上下货架Unit Nav结束-->
+
+            <a class='ui-btn'id="passDoorTemp">临时过仓库</a>
         </div>
         
         <div data-role="footer" data-position="fixed" id="fillTrayDialogActionFooter" style="display:none" >
@@ -489,6 +567,28 @@
     
     $("#clearScanResult").on("click",function(){
     	$('#scanTrayContentUL').html("");
+    });
+
+    $("#addNewTrays").on("click",function(){
+        var query = "INSERT INTO `wTrays` ( `rfid`, `twStatus`) VALUES ('TESTRFIDCODE','空闲')";
+        $.post("phpSearch.php?insert="+query,function(data){
+            console.log("结果:"+data);
+            $("#shortCutContent").append(data);
+        });
+    });
+
+    $("#randonRFID").on("click",function(){
+        var query = "SELECT * FROM `wTrays` WHERE `rfid`='TESTRFIDCODE' ";
+        $.post("phpSearch.php?query="+query,function(data){
+            console.log("结果:"+data);
+            //$("#shortCutContent").append(data);
+            var obj = jQuery.parseJSON(data);
+            for( var i in obj){
+                var rfid = "TESTRFIDCODE"+obj[i].wtID;
+                $.get("phpUpdate.php?table=wTrays&&idAttr=wtID&&idValue="+obj[i].wtID+"&&tAttr=rfid&&tValue="+rfid);
+                
+            }
+        });
     });
 </script>
 <script type="application/javascript" src="enter-js.js"></script>

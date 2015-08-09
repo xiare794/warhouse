@@ -1,8 +1,8 @@
 
 <?php require_once("config.php"); //session
 ?>
-<!DOCTYPE html>
-<html lang="zh-cn"><!-- 2014.09.28 -->
+<DOCTYPE html>
+<html lang="zh-cn">
 	<head>
 		<?php
   	 	//如果没有用户信息，就跳转回登陆页面
@@ -23,13 +23,9 @@
 
 
 		<title>记录</title>
-		<style >
-		.form-control{
-			padding: 0px 10px;
-		}		
-		</style>
+
 		
-		<!-- <link href="dist/css/bootstrap.css" rel="stylesheet"> -->
+		
 	</head>
 	<body >
 		<!-- agent container -->
@@ -56,15 +52,19 @@
 					  </div>
 
 					  <div class="form-group col-lg-3 col-md-3" class="input-xs">
-					    <label for="exampleInputEmail1">货代地址</label>
+					    <label for="waAddr">货代地址</label>
 					    <input type="text" class="form-control" id="waAddr" name="waAddr" placeholder="货代地址">
 					  </div>
 					  <div class="form-group col-lg-3 col-md-3" class="input-xs">
-					    <label for="exampleInputEmail1">联系人</label>
+					    <label for="waContact">联系人</label>
 					    <input type="text" class="form-control" id="waContact" name="waContact" placeholder="联系人">
 					  </div>
-					  <div class="form-group col-lg-9 col-md-9" class="input-xs">
-					    <label for="exampleInputEmail1">备注</label>
+					  <div class="form-group col-lg-3 col-md-3" class="input-xs">
+					    <label for="CODE">代码</label>
+					    <input type="text" class="form-control" id="CODE" name="CODE" placeholder="代码">
+					  </div>
+					  <div class="form-group col-lg-6 col-md-6" class="input-xs">
+					    <label for="waNote">备注</label>
 					    <input type="text" class="form-control" id="waNote" name="waNote" placeholder="备注">
 					  </div>
 					  <div class="col-lg-3 col-lg-offset-9 col-md-3 col-md-offset-9 ">
@@ -80,7 +80,7 @@
 					<div class="navbar navbar-default" role="navigation">
 						<div class="container-fluid">
 							<div class="navbar-header">
-								<a class="navbar-brand" href="#">代理商操作</a>
+								<a class="navbar-brand" href="#">代理商</a>
 							</div>
 							<div class="navbar-form navbar-left" role="search">
 						        <div class="form-group">
@@ -89,10 +89,8 @@
 						        
 						     </div>
 						     <div class="navbar-form navbar-right">
-						      	<button id="agentOpHint" class="btn btn-default btn-sm form-control">操作提示</button>
 						      	<button  class="btn btn-default btn-sm form-control" id="createAgentBtn">新增货代</button>
 						     </div>
-							
 						</div>
 					</div>
 
@@ -101,17 +99,100 @@
 					<div id="agentBoxContainerRelated"  ></div>
 					<div id="agentBoxContainerUnRelated"  ></div>
 				</div>
+				
 				<div class="panel panel-default" id="agentInStock" >
 				</div>
+
+
+				<div class="modal fade" id="newAgentModal" tabindex="-1" role="dialog" >
+			    <div class="modal-dialog ">
+			        <div class="modal-content">
+			            <div class="modal-header">
+				            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				            <h4 class="modal-title" id="myModalLabel">新增货代表格</h4>
+			            </div>
+			            <form id="newAgentModalForm" role="form" method="POST">
+				            <div class="modal-body">
+				            	
+				                <!--<h3>Modal Body</h3>-->
+
+						          <div class="form-group">
+						          	<label for="waName">名称</label>
+			    							<input type="text" class="form-control input-xs" id="waName" name="waName" placeholder="货代名称">
+						          </div>
+										  <div class="form-group" class="input-xs">
+										    <label for="waTel">联系方式</label>
+										    <input type="text" class="form-control" id="waTel" name="waTel" placeholder="货代联系方式">
+										  </div>
+										  <div class="form-group">
+										    <label for="CODE">代码</label>
+										    <input type="text" class="form-control" id="CODE" name="CODE" placeholder="代码">
+										  </div>
+										  <div class="form-group">
+										    <label for="exampleInputEmail1">备注</label>
+										    <input type="text" class="form-control" id="waNote" name="waNote" placeholder="备注">
+										  </div>
+								      
+				            </div>
+				            <div class="modal-footer">
+				                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				                <button type="button" class="btn btn-primary" id="submitNewAgent">保存新建货代</button>
+					        	</div>
+					        </form>
+				    </div>
+				  </div>
+				</div>
+
+				<div class="modal fade" id="editAgentModal" tabindex="-1" role="dialog" >
+			    <div class="modal-dialog">
+			        <div class="modal-content">
+			            <div class="modal-header">
+				            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				            <h4 class="modal-title" id="myModalLabel">货代信息</h4>
+			            </div>
+			            <form id="editAgentModalForm" role="form" method="POST">
+				            <div class="modal-body">
+				            	<div id="editAgentModalInfo">
+				            	</div>
+				                <!--<h3>Modal Body</h3>-->
+
+						          <div class="form-group">
+						          	<label for="waName">名称</label>
+			    							<input type="text" class="form-control input-xs" id="waName" name="waName" placeholder="货代名称">
+						          </div>
+										  <div class="form-group" class="input-xs">
+										    <label for="waTel">联系方式</label>
+										    <input type="text" class="form-control" id="waTel" name="waTel" placeholder="货代联系方式">
+										  </div>
+										  <div class="form-group">
+										    <label for="CODE">代码</label>
+										    <input type="text" class="form-control" id="CODE" name="CODE" placeholder="代码">
+										  </div>
+										  <div class="form-group">
+										    <label for="exampleInputEmail1">备注</label>
+										    <input type="text" class="form-control" id="waNote" name="waNote" placeholder="备注">
+										  </div>
+								      
+				            </div>
+				            <div class="modal-footer">
+				                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				                <button type="button" class="btn btn-warning" id="openEditAgentForm" >修改货代</button>
+				                <button type="button" class="btn btn-primary" id="submitEditAgentForm" style="display:none">保存修改</button>
+				                <button type="button" class="btn btn-danger" id="deleteEditAgentForm">删除本货代</button>
+					        	</div>
+					        </form>
+				    </div>
+				  </div>
+				</div>
+
 			</div>
 
-			<div 
+
+
+			
 		
 	</body>
 	
-	<!-- Bootstrap core js -->
-	<!--<script src="dist/js/jquery-1.11.1.js"></script>
-  <script src="dist/js/bootstrap.min.js"></script> -->
 
   <script>
   	//agent的三个需求
@@ -126,45 +207,44 @@
 		
 
 		console.log(userName);
-		//addRemind("测试","这是一个输出和定时器<br>用户"+userName+"  代码"+userID,3000);
-		//显示列表
+		
 		var query  = "(SELECT * ";
-		query 		+= "FROM wAgents a, warePackages p, wApplications app ";
-		query 		+= "WHERE a.waID=p.wpAgentID AND p.wpID=app.wpID GROUP by app.InstockID )";
-		query 		+= " ORDER by p.wpAgentID;"	
+		query 		+= "FROM wAgents a, wAppIn app ";
+		query 		+= "WHERE a.waID=app.agentID  GROUP by app.InstockID )";
+		query 		+= " ORDER by app.agentID;"	
 		$.ajax({ 
 	    type : "post", 
 	    url : "_search.php?query="+query,
 	    async : false, 
 	    success : function(data){
 	    	//console.log(data);
-				var head = new Array("货代名称","货单内容","联系方式/人电话地址","进仓编号");
-				var attr = new Array("waName","appName","waContact","InStockID");
+				var head = new Array("货代名称","代码","货单内容","进仓编号","数量","入库时间");
+				var attr = new Array("waName","CODE", "appName","InStockID","appPreCount","appBookingDate");
 				var obj = jQuery.parseJSON(data);
-				var link = "InStockID";
+				var link = null;
 				//console.log(obj);
 				$('#agentBoxContainerRelated').html( FormPanelTable(obj,attr,head,link,"代理商列表"));
 	    }
 	  });
-	  //显示无app或wp绑定列表
-	  var query  = "SELECT * FROM wAgents a ";
-		query 		+= "WHERE NOT EXISTS ( SELECT wpAgentID FROM warePackages WHERE wpAgentID=a.waID) ";
-		//query 		+= "ORDER by a.waID;"	
-		$.ajax({ 
-			type : "post", 
-			url : "_search.php?query="+query,
-			async : false, 
-			success : function(data){
-				//console.log(data);
-				var head = new Array("货代名称","联系方式/人电话地址");
-				var attr = new Array("waName","waContact");
+
+		query  = "SELECT * ";
+		query 		+= "FROM `wAgents` ";
+		query 		+= "WHERE wAgents.waID not in (SELECT `agentID` FROM `wAppin`)";
+	  $.ajax({ 
+	    type : "post", 
+	    url : "_search.php?query="+query,
+	    async : false, 
+	    success : function(data){
+	    	//console.log(data);
+				var head = new Array("货代名称","代码","联系方式");
+				var attr = new Array("waName","CODE","waTel");
 				var obj = jQuery.parseJSON(data);
-				var link = "InStockID";
+				var link = null;
 				//console.log(obj);
-				$('#agentBoxContainerUnRelated').html( FormPanelTable(obj,attr,head,link,"未启用代理商"));
-			}
-		});
-					//$.post("_search.php?query="+query,function(data){
+				$('#agentBoxContainerUnRelated').html( FormPanelTable(obj,attr,head,link,"未入仓代理商"));
+	    }
+	  });
+
 			
 			//增加过滤
 			$('#agentSearchInput').on("keyup",function(event){
@@ -183,10 +263,61 @@
 
 			//对货代编辑添加事件
 			$('.agentIDLoad').on("click",function(){
-				$('#editAgent').show();
-				$('#agentInStock').hide();
-				console.log($(this).attr('data'));
+				var waID = $(this).attr('data');
+				//$('#editAgent').show();
+				//$('#agentInStock').hide();
+
+			
+				var modalhtml = "";
+				//获取对应货代
+				$("#openEditAgentForm").show();
+				$("#submitEditAgentForm").hide();
+				$("#deleteEditAgentForm").hide();
+
+				if( $(this).attr("deleteOk")=="1"){
+					console.log("货代可以被删除");
+					$("#deleteEditAgentForm").show();
+
+					$("#deleteEditAgentForm").unbind("click").on("click",function(){
+						var deleteQuery = "DELETE FROM `wAgents` WHERE `waID`="+waID;
+						console.log(deleteQuery);
+						$.post("_search.php?delQuery="+deleteQuery,function(data){
+							if(data[0]=="1"){
+								addRemind("操作成功","删除货代"+$("#editAgentModal #waName").val(),3000);
+								addAgentMemo("delete");
+							}
+							else{
+								addRemind("操作失败","删除货代遇到错误"+data,3000);
+							}
+						});
+						$('#editAgentModal').modal('hide');
+					});
+
+				}
+
+				$.ajax({ 
+			    type : "post", 
+			    url : "_search.php?table=wAgents&attr=waID&val="+$(this).attr('data'),
+			    async : false, 
+			    success : function(data){
+			    	var obj = jQuery.parseJSON(data);
+			    	modalhtml += "<h4>"+obj[0]['waName']+"</h4>";
+						modalhtml += "<p>ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+obj[0]['waID']+"<br>";
+						modalhtml += "代码:&nbsp;&nbsp;&nbsp;&nbsp;"+obj[0]['CODE']+"<br>";
+						modalhtml += "联系:&nbsp;&nbsp;&nbsp;&nbsp;"+obj[0]['waTel']+"<br>";
+						modalhtml += "备注:&nbsp;&nbsp;&nbsp;&nbsp;"+obj[0]['waNote']+"</p>";
+
+						$("#editAgentModal #waName").val(obj[0]['waName']);
+						$("#editAgentModal #waTel").val(obj[0]['waTel']);
+						$("#editAgentModal #CODE").val(obj[0]['CODE']);
+						$("#editAgentModal #waNote").val(obj[0]['waNote']);
+
+						$("#editAgentModalForm").attr("waID",obj[0]['waID']);
+			    }
+			  });
+			  /*
 				$.post("_search.php?table=wAgents&attr=waID&val="+$(this).attr('data'),function(data){
+					console.log(data);
 					var obj = jQuery.parseJSON(data);
 					//console.log(obj);
 					$("#waID").val(obj[0]['waID']);
@@ -200,32 +331,103 @@
 					$("#updateAgentBtn").show();
 					$("#deleteAgentBtn").show();
 					$("#newAgentBtn").hide();
+
+					modalhtml += "<h4>"+obj[0]['waName']+"</h4>";
+					modalhtml += "<p>ID&nbsp;&nbsp;&nbsp;&nbsp;:"+obj[0]['waID']+"<br>";
+					modalhtml += "<p>地址:"+obj[0]['waAddr']+"<br>";
+					modalhtml += "<p>联系方式:"+obj[0]['waContact']+"<br>";
+					modalhtml += "<p>电话:"+obj[0]['waTel']+"<br>";
+					modalhtml += "<p>备注:"+obj[0]['waNote']+"</p>";
+
+				});*/
+
+				
+				//使用新建modal
+				var options = {
+					"backdrop":true,
+					"keyboard":true,
+					"show":true
+				}
+				$("#editAgentModal").modal(options);
+				$("#editAgentModal .form-group").hide();
+				
+				
+
+				$('#editAgentModal').unbind("hidden.bs.modal").on('hidden.bs.modal', function (e) {
+				  // do something...
+				  //console.log("modal 重新增加关闭事件");
 				});
+				$("#editAgentModal #editAgentModalInfo").html(modalhtml);
+				$("#openEditAgentForm").unbind("click").on("click",function(){ //修改货代开启
+					$("#editAgentModal #editAgentModalInfo").html(""); //不显示html
+					$("#editAgentModal .form-group").show();
+					$("#editAgentModal #submitEditAgentForm").show();
+					$("#openEditAgentForm").hide();
+					
+					
+				});
+				$("#submitEditAgentForm").unbind("click").on("click",function(){
+					var waID = $("#editAgentModalForm").attr("waID");
+					console.log("更新"+waID+"货代");
+					console.log($("#editAgentModal #waName"));
+					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+waID+"&&tAttr=waName&&tValue="+$("#editAgentModal #waName").val());
+					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+waID+"&&tAttr=waTel&&tValue="+$("#editAgentModal #waTel").val());
+					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+waID+"&&tAttr=CODE&&tValue="+$("#editAgentModal #CODE").val());
+					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+waID+"&&tAttr=waNote&&tValue="+$("#editAgentModal #waNote").val());
+					addAgentMemo("edit");
+					$('#editAgentModal').modal('hide');
+				});
+
 			});
 			//新增货代按钮
 			$('#createAgentBtn').on("click",function(){
-				$('#editAgent').show();
-				$('#agentInStock').hide();
-				$("#updateAgentBtn").hide();
-				$("#deleteAgentBtn").hide();
-				$("#newAgentBtn").show();
+				//$('#editAgent').show();
+				//$('#agentInStock').hide();
+				//$("#updateAgentBtn").hide();
+				//$("#deleteAgentBtn").hide();
+				//$("#newAgentBtn").show();
+				//使用新建modal
+				var options = {
+					"backdrop":true,
+					"keyboard":true,
+					"show":true
+				}
+				$("#newAgentModal").modal(options);
+
+				$('#newAgentModal').unbind("hidden.bs.modal").on('hidden.bs.modal', function (e) {
+				  // do something...
+				  console.log("modal 重新增加关闭事件");
+				});
+
+				//$("#newAgentModal .modal-body").html("<p>动态增加modal</p>");
+
+				$("#newAgentModal #submitNewAgent").unbind("click").on("click", function(event){
+					console.log("modal 提交新货代，并且关闭modal");
+					$.post( "_insert.php?table=wAgents", $( "#newAgentModalForm" ).serialize())
+						.done(function(data){
+							console.log(data);
+							if(data[0]=="1"){
+								$('#DialogRfidHint').html("绑定成功");
+								addRemind("新增货代成功","新增货代"+$('#waName')+"成功",3000);
+								addAgentMemo("new");
+							}
+							else{
+								$('#DialogRfidHint').html(data);
+								addRemind("新增货代失败","新增货代"+$('#waName')+"失败",3000,"bs-callout-danger");
+							}
+							$('#newAgentModal').modal('hide');
+					});
+				});
+
+
 			});
 			//取消操作按钮，
-			$('#cancelBtn').on('click',function(){
-				$('#editAgent').hide();
-			});
-			//操作提示按钮
-			$('#agentOpHint').on("click",function(){
-				var title="代理商操作提示";
-				var hint="<ol>";
-				hint += "<li>点击新增货代，输入货代信息，点击新增增加一个货物代理商人</li>";
-				hint += "<li>点击某个货代名称，修改信息再点击更新保存修改的信息</li>";
-				hint += "<li>点击某个货代名称，进行删除操作</li>";
-				hint += "<li>点击某个进仓编号，查看进仓编号下的货物情况</li>";
-				addRemind(title,hint,5000);
-			});
+			//$('#cancelBtn').on('click',function(){
+			//	$('#editAgent').hide();
+			//});
+			
 			//新建按钮
-			$('#newAgentBtn').on("click",function(data){
+			/*$('#newAgentBtn').on("click",function(data){
 				$.post( "_insert.php?table=wAgents", $( "#editAgentForm" ).serialize())
 						.done(function(data){
 							console.log(data);
@@ -239,7 +441,7 @@
 								addRemind("新增货代失败","新增货代"+$('#waName')+"失败",3000,"bs-callout-danger");
 							}
 					});
-			});
+			});*/
 			//增加备忘
 			function addAgentMemo(type){
 				var memo = "";
@@ -279,6 +481,7 @@
 				});
 			}
 			//修改信息
+			/*
 			$("#updateAgentBtn").on("click",function(data){
 					console.log("更新"+$("#waID").val()+"货代");
 					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+$("#waID").val()+"&&tAttr=waName&&tValue="+$("#waName").val());
@@ -288,42 +491,32 @@
 					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+$("#waID").val()+"&&tAttr=waTel&&tValue="+$("#waTel").val());
 					$.get("phpUpdate.php?table=wAgents&&idAttr=waID&&idValue="+$("#waID").val()+"&&tAttr=waNote&&tValue="+$("#waNote").val());
 					addAgentMemo("edit");
-					//需要userID，actType actTime,#inStockID,#trayID,#trayID,#slotID,actContent
-					//有userID actType="更新货代",actTime = date('Y-m-d H:i:s')
-					/*
-					var output = "userID"+userID+"<br>";
-					output += "actTime使用php时间"+"<br>";
-					output += "actType更新货代<br>";
-					output += $("#waID").val()+$("#waName").val()+ $("#waType").val()+$("#waAddr").val()+$("#waContact").val()+$("#waTel").val()+$("#waNote").val();
-					outputHint("测试备注，之后删除",output,3000);
-					*/
 					
-
-					
-			});
+			});*/
 			$('input').on("blur",function(){
 					//console.log("从input退出");
 					$(this).parent().addClass("has-warning");
 			});
+			/*
 			$('#deleteAgentBtn').on("click",function(data){
 				console.log("暂时不提供此功能");
 				addRemind("删除货代","暂时不提供删除功能",3000,"bs-callout-danger");
-			});
+			});*/
 			//这里需要根据编码返回1，所有编码下的入库出库匹配的货物名称，数量。
 			//2，未完成的出库的详细连tray的信息
 			$('.agentLoad').on('click',function(data){
+				console.log("告警 ---具体货物进仓编号");
 				//console.log($(this).attr('data'));
 				$('#agentInStock').show();
 				$('#editAgent').hide();
 				//这里需要的是所有已完成出入库的为一组
 				var query = "SELECT app1.InStockID, app1.appName, app1.appID appIn, app2.appID appOut, app1.appCount,app1.appCount inCount, app1.appBookingDate inTime, app2.appBookingDate outTime, app2.appCount outCount ";
 				query 		+="FROM wApplications app1, wApplications app2 ";
-				query 		+="WHERE app1.appType=\"in\" AND app2.appType=\"out\" AND app1.appComplete=1 AND app2.appComplete=1 AND app1.InstockID=app2.InstockID AND app1.InstockID=\""+$(this).attr('data')+"\"";
-				
+				query 		+="WHERE app1.appType=\"in\" AND app2.appType=\"out\" AND app1.appComplete=1 AND app2.appComplete=1 AND app1.InstockID=app2.InstockID AND app1.InstockID=\""+$(this).attr('data')+"\"";			
 				$.post("_search.php?query="+query,function(data){
 					//console.log(data);
 					var obj = jQuery.parseJSON(data);
-					console.log(obj);
+					//console.log(obj);
 					var head = new Array("货物代码","名称","入库单","入库数量","入库时间","出库单","出库数量","出库时间");
 					var attr = new Array("InStockID","appName","appIn","inCount","inTime","appOut","outCount","outTime");
 					$('#agentInStock').html(FormPanelTable(obj,attr,head,null,"已完成出库货物列表"));
@@ -337,7 +530,7 @@
 				$.post("_search.php?query="+query,function(data){
 					//console.log(data);
 					var obj = jQuery.parseJSON(data);
-					console.log(obj);
+					//console.log(obj);
 
 
 					var link = "appID";
@@ -350,7 +543,9 @@
 						//库单id= $(this).attr('id')
 						//显示详细情况div = #appDetailBox
 						//console.log( "appDetail.php?appID="+ $(this).attr('id') );
+						console.log($(this).attr('data'));
 						$('#appDetailBox').load("appDetail.php?appID="+$(this).attr('data'));
+
 						jumpPage("#appDetailBox","#navViewAppBtn");
 					});
 
@@ -376,15 +571,17 @@
 			output 	+= "<tbody>";
 
 			var previousAg = "";
+			var extra = "";
+			if(title == "未入仓代理商")
+				extra += " deleteOk=\"1\" ";
+			if(title == "代理商列表")
+				extra += " deleteOk=\"0\" ";
+
+
 			for(var i in obj){
 				output += "<tr class=\"agentRow\">";
 				for(var j in attr){
-					//如果打印appID的链接
-					if(attr[j] == "appID"){
-						output += "<td><a  class=\"appOpPanelDetail btn btn-default btn-xs\" data=\""+obj[i][attr[j]]+"\">"+obj[i][attr[j]]+"</a></td>";
-					}
-					//加跳转
-					else if(link == attr[j]){
+					if(link == attr[j]){
 						//console.log("相同");
 						output += "<td><a  class=\"agentLoad btn btn-default btn-xs\" data=\""+obj[i][attr[j]]+"\">"+obj[i][attr[j]]+"</a></td>";
 					}
@@ -395,8 +592,9 @@
 					}
 					//对货代名称增加link
 					else if ("waName" == attr[j]){
-						output += "<td><a class=\"agentIDLoad btn btn-default btn-xs\" data=\""+obj[i]['waID']+"\">"+obj[i]["waName"]+"</a></td>";
+						output += "<td><a class=\"agentIDLoad btn btn-default btn-xs\" data=\""+obj[i]['waID']+"\""+extra+">"+obj[i]["waName"]+"</a></td>";
 					}
+
 					else{
 						output += "<td>"+obj[i][attr[j]]+"</td>";
 					}
@@ -404,7 +602,7 @@
 				}
 				output += "</tr>";
 				previousAg = obj[i]['waName'];
-				//console.log(previousAg);
+				
 			}
 			output 	 += "</tbody>";
 			output 	 += "</table>";
